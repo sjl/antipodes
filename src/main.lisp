@@ -23,6 +23,15 @@
 
 (defparameter *wat* nil)
 (defparameter *player* nil)
+(defparameter *sidebar-width* 20)
+
+
+;;;; More Utils Lol
+(defmacro with-window-dims (window &body body)
+  (with-gensyms (w h)
+    `(multiple-value-bind (,w ,h) (charms:window-dimensions ,window)
+       (with-dims (,w ,h)
+         ,@body))))
 
 
 ;;;; Colors -------------------------------------------------------------------
@@ -167,12 +176,17 @@
 
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 2))
-    (with-panel-and-window (map-pan map-win *width* *height* 0 0)
+    (with-panels-and-windows
+        ((map-pan map-win (- *width* *sidebar-width*) *height* 0 0)
+         (bar-pan bar-win *sidebar-width* *height* (- *width* *sidebar-width*) 0))
       (iterate
-        (center-view-on-player *width* *height*)
-        (render-map map-win)
+        (charms:clear-window bar-win)
+        (border bar-win)
+        (with-window-dims map-win
+          (center-view-on-player *width* *height*)
+          (render-map map-win))
         (redraw)
-        (until (eql :quit (world-map-input map-win))))))
+        (until (eql :quit (world-map-input bar-win))))))
   nil)
 
 
