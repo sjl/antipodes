@@ -22,6 +22,7 @@
 (defparameter *view-y* nil)
 
 (defparameter *wat* nil)
+(defparameter *player* nil)
 
 
 ;;;; Colors -------------------------------------------------------------------
@@ -32,6 +33,8 @@
   (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
   (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
   (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
+
+  (+black-white+  charms/ll:COLOR_BLACK   charms/ll:COLOR_WHITE)
   )
 
 
@@ -100,7 +103,8 @@
   (setf *terrain* (ap.generation::generate-heightmap))
   (destructuring-bind (map-width map-height) (array-dimensions *terrain*)
     (setf *view-x* (truncate map-width 2)
-          *view-y* (truncate map-height 2))))
+          *view-y* (truncate map-height 2)))
+  (setf *player* (make-player)))
 
 (defun generate-world ()
   (with-dims (20 2)
@@ -123,6 +127,18 @@
         ((< height  0.55) (values #\^ +white-black+)) ; hills
         (t                (values #\# +white-black+)))) ; mountains
 
+(defun clamp-view (coord size)
+  (clamp 0 (- ap.generation::*map-size* size 1) coord))
+
+(defun center-view (width height x y)
+  (setf *view-x* (clamp-view (- x (truncate width 2)) width)
+        *view-y* (clamp-view (- y (truncate height 2)) height)))
+
+(defun center-view-on-player (width height)
+  (center-view width height
+               (coords/x *player*)
+               (coords/y *player*)))
+
 (defun render-map (window)
   (iterate
     (with terrain = *terrain*)
@@ -134,7 +150,11 @@
     (for y = (+ sy vy))
     (for (values glyph color) = (terrain-char (aref terrain x y)))
     (with-color (window color)
-      (charms:write-char-at-point window glyph sx sy))))
+      (charms:write-char-at-point window glyph sx sy))
+    (for entity = (find-if #'visible? (coords-lookup x y)))
+    (when entity
+      (with-color (window (visible/color entity))
+        (charms:write-string-at-point window (visible/glyph entity) sx sy)))))
 
 
 (defun world-map-input (window)
@@ -149,6 +169,7 @@
   (with-dims ((- *screen-width* 2) (- *screen-height* 2))
     (with-panel-and-window (map-pan map-win *width* *height* 0 0)
       (iterate
+        (center-view-on-player *width* *height*)
         (render-map map-win)
         (redraw)
         (until (eql :quit (world-map-input map-win))))))

@@ -2,7 +2,7 @@
 ;;;; See http://quickutil.org for details.
 
 ;;;; To regenerate:
-;;;; (qtlc:save-utils-as "quickutils.lisp" :utilities '(:COMPOSE :CURRY :DEFINE-CONSTANT :MKSTR :ONCE-ONLY :RCURRY :READ-FILE-INTO-STRING :SYMB :WITH-GENSYMS) :ensure-package T :package "AP.QUICKUTILS")
+;;;; (qtlc:save-utils-as "quickutils.lisp" :utilities '(:COMPOSE :CURRY :DEFINE-CONSTANT :DELETEF :MKSTR :ONCE-ONLY :RCURRY :READ-FILE-INTO-STRING :SYMB :WITH-GENSYMS) :ensure-package T :package "AP.QUICKUTILS")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package "AP.QUICKUTILS")
@@ -15,7 +15,7 @@
 (when (boundp '*utilities*)
   (setf *utilities* (union *utilities* '(:MAKE-GENSYM-LIST :ENSURE-FUNCTION
                                          :COMPOSE :CURRY :DEFINE-CONSTANT
-                                         :MKSTR :ONCE-ONLY :RCURRY
+                                         :DELETEF :MKSTR :ONCE-ONLY :RCURRY
                                          :WITH-OPEN-FILE* :WITH-INPUT-FROM-FILE
                                          :READ-FILE-INTO-STRING :SYMB
                                          :STRING-DESIGNATOR :WITH-GENSYMS))))
@@ -127,6 +127,16 @@ Signals an error if `name` is already a constant variable whose value is not
 equal under `test` to result of evaluating `initial-value`."
     `(defconstant ,name (%reevaluate-constant ',name ,initial-value ,test)
        ,@(when documentation `(,documentation))))
+  
+
+  (declaim (inline delete/swapped-arguments))
+  (defun delete/swapped-arguments (sequence item &rest keyword-arguments)
+    (apply #'delete item sequence keyword-arguments))
+
+  (define-modify-macro deletef (item &rest remove-keywords)
+    delete/swapped-arguments
+    "Modify-macro for `delete`. Sets place designated by the first argument to
+the result of calling `delete` with `item`, place, and the `keyword-arguments`.")
   
 
   (defun mkstr (&rest args)
@@ -291,7 +301,7 @@ unique symbol the named variable will be bound to."
     `(with-gensyms ,names ,@forms))
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (export '(compose curry define-constant mkstr once-only rcurry
+  (export '(compose curry define-constant deletef mkstr once-only rcurry
             read-file-into-string symb with-gensyms with-unique-names)))
 
 ;;;; END OF quickutils.lisp ;;;;

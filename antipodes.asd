@@ -25,7 +25,8 @@
                  (:module "generation" :serial t
                   :components ((:file "world")))
                  (:module "aspects" :serial t
-                  :components ((:file "coordinates")))
+                  :components ((:file "coordinates")
+                               (:file "visible")))
                  (:module "entities" :serial t
                   :components ((:file "player")))
                  (:file "main")))))

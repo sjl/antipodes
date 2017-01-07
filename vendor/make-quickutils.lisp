@@ -7,6 +7,7 @@
                :compose
                :curry
                :define-constant
+               :deletef
                :mkstr
                :once-only
                :rcurry

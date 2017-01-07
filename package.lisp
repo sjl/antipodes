@@ -47,7 +47,21 @@
     :beast
     :ap.utilities
     :ap.quickutils)
-  (:export))
+  (:export
+    :player
+    :make-player
+
+    :coords
+    :coords/x
+    :coords/y
+    :coords?
+    :coords-lookup
+
+    :visible
+    :visible?
+    :visible/glyph
+    :visible/color
+    ))
 
 (defpackage :ap
   (:use
@@ -56,6 +70,7 @@
     :cl-arrows
     :losh
     :beast
+    :ap.entities
     :ap.utilities
     :ap.quickutils)
   (:export
