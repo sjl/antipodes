@@ -375,10 +375,17 @@
     (when (passablep (aref *structures* dest-x dest-y))
       (coords-move-entity player dest-x dest-y))))
 
+(defun get-items ()
+  (iterate (for item :in (remove-if-not #'holdable? (coords-nearby *player* 0)))
+           (until (player-inventory-full-p *player*))
+           (player-get *player* item)))
+
+
 (defun world-map-input (window)
   (case (charms:get-char window)
     (#\q :quit)
     (#\h :help)
+    (#\g (get-items) :tick)
     (:left  (move-player -1 0) :tick)
     (:right (move-player 1 0) :tick)
     (:up    (move-player 0 -1) :tick)

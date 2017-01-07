@@ -35,7 +35,10 @@
 
 (defun tick-player (player)
   (zapf (player/energy player) (clamp 0.0 100.0 (- % 0.1))
-        (player/health player) (clamp 0.0 100.0 (+ % 0.1))))
+        (player/health player) (clamp 0.0 100.0
+                                      (+ % (if (minusp (player/energy player))
+                                             -0.1
+                                             0.1)))))
 
 
 (defun player-inventory-full-p (player)
