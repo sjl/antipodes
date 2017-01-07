@@ -193,8 +193,8 @@
       (write-lines-centered win *logo* 0)
       (redraw)
       (charms:get-char win)))
-  ; (intro1)
-  (generate-world)
+  (intro1)
+  ; (generate-world)
   )
 
 
@@ -413,7 +413,7 @@
           (render-items map-win))
         (redraw)
         (if-first-time
-          (popup "Head north!")
+          (popup (format nil "You must head north to survive.~2%You can press h for help in-game."))
           (if (ap.flavor:flavorp)
             (popup (ap.flavor:random-flavor))
             (case (world-map-input bar-win)
@@ -443,3 +443,4 @@
       (title)))
 
   t)
+

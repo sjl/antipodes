@@ -11,3 +11,4 @@
 (defparameter *ruin-size-mean* 10.0)
 (defparameter *ruin-size-dev* 2.0)
 (defparameter *graffiti-chance* 1/10)
+(defparameter *flavor-chance* 1/300)

@@ -1,10 +1,9 @@
 (in-package :ap.flavor)
 
-(defparameter *flavor-chance* 1/250)
 (defparameter *animals* (read-file-into-form "data/animals.lisp"))
 
 (defun flavorp ()
-  (randomp *flavor-chance*))
+  (randomp ap::*flavor-chance*))
 
 (defun animal ()
   (format nil "You see ~A ~A.~2%~A"
@@ -19,6 +18,12 @@
                         "A good omen."
                         "Alone, like you."))))
 
+(defun feeling ()
+  (format nil "You suddenly have a ~A feeling.~2%~A"
+          (random-elt #("a good" "a bad" "a worrying" "a hopeful" "an uneasy"))
+          (random-elt #("It passes after a moment."
+                        "It lingers for a while."))))
+
 (defun wind ()
   (format nil "A ~A ~A the ~A air against your skin."
           (random-elt #("light breeze"
@@ -31,4 +36,5 @@
 (defun random-flavor ()
   (let ((r (random 1.0)))
     (cond ((< r 0.20) (animal))
+          ((< r 0.80) (feeling))
           (t          (wind)))))

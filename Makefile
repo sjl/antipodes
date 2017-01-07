@@ -12,14 +12,14 @@ lisps := $(shell ffind '\.(asd|lisp|ros)$$')
 build/antipodes: $(lisps)
 	ros build build/antipodes.ros
 
-# update-deps:
-# 	hg -R /home/sjl/cl-losh pull -u
-# 	hg -R /home/sjl/beast pull -u
+update-deps:
+	hg -R /home/sjl/cl-losh -v pull -u
+	hg -R /home/sjl/beast -v pull -u
 
-# /opt/antipodes/antipodes: update-deps build/antipodes
-# 	rm /opt/antipodes/antipodes
-# 	cp build/antipodes /opt/antipodes/antipodes
+/opt/antipodes/antipodes: update-deps build/antipodes
+	rm -f /opt/antipodes/antipodes
+	cp build/antipodes /opt/antipodes/antipodes
 
-# deploy: build/antipodes
-# 	rsync --exclude=build/antipodes --exclude=.hg -avz . antipodes:/home/sjl/antipodes
-# 	ssh silt make -C /home/sjl/antipodes /opt/antipodes/antipodes
+deploy: build/antipodes
+	rsync --exclude=build/antipodes --exclude=.hg -avz . silt:/home/sjl/antipodes
+	ssh silt make -C /home/sjl/antipodes /opt/antipodes/antipodes

@@ -5,4 +5,3 @@ CONTROLS
 ←↑↓→ - move
    q - quit
    g - get item
-   d - drop item
