@@ -3,6 +3,7 @@
 ;;;; Charms -------------------------------------------------------------------
 (defmacro with-window ((symbol width height x y) &body body)
   `(let ((,symbol (charms:make-window ,width ,height ,x ,y)))
+     (charms:enable-extra-keys ,symbol)
      (unwind-protect (progn ,@body)
        (charms:destroy-window ,symbol))))
 
@@ -52,8 +53,14 @@
 (defun write-string-left (window string x y)
   (charms:write-string-at-point window string x y))
 
+(defun write-string-right (window string x-offset y)
+  (charms:write-string-at-point
+    window string
+    (- ap::*width* (length string) (abs x-offset))
+    y))
+
 (defun write-string-centered (window string y)
-  (charms:write-string-at-point window string (center (length string) *width*) y))
+  (charms:write-string-at-point window string (center (length string) ap::*width*) y))
 
 (defun write-lines-left (window string start-x start-y)
   (iterate (for line :in (cl-strings:split string #\newline))

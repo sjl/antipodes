@@ -17,6 +17,7 @@
     :border
     :redraw
     :write-string-left
+    :write-string-right
     :write-string-centered
     :write-lines-left
     :write-lines-centered
