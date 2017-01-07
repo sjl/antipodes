@@ -50,6 +50,10 @@
   (:export
     :player
     :make-player
+    :player/health
+    :health-description
+    :player/energy
+    :energy-description
 
     :coords
     :coords/x

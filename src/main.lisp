@@ -23,7 +23,7 @@
 
 (defparameter *wat* nil)
 (defparameter *player* nil)
-(defparameter *sidebar-width* 20)
+(defparameter *sidebar-width* 30)
 
 
 ;;;; More Utils Lol
@@ -165,6 +165,18 @@
       (with-color (window (visible/color entity))
         (charms:write-string-at-point window (visible/glyph entity) sx sy)))))
 
+(defun render-sidebar (window)
+  (charms:clear-window window)
+  (border window)
+  (write-string-left window
+                     (format nil "You are ~A" (health-description
+                                                (player/health *player*)))
+                     1 1)
+  (write-string-left window
+                     (format nil "        ~A" (energy-description
+                                                (player/energy *player*)))
+                     1 2))
+
 
 (defun world-map-input (window)
   (case (charms:get-char window)
@@ -175,13 +187,13 @@
     (:down  (zapf *view-y* (clamp (1+ %) 0 20000)))))
 
 (defun world-map ()
-  (with-dims ((- *screen-width* 2) (- *screen-height* 2))
+  (with-dims ((- *screen-width* 2) (- *screen-height* 1))
     (with-panels-and-windows
         ((map-pan map-win (- *width* *sidebar-width*) *height* 0 0)
          (bar-pan bar-win *sidebar-width* *height* (- *width* *sidebar-width*) 0))
       (iterate
-        (charms:clear-window bar-win)
-        (border bar-win)
+        (with-window-dims bar-win
+          (render-sidebar bar-win))
         (with-window-dims map-win
           (center-view-on-player *width* *height*)
           (render-map map-win))
