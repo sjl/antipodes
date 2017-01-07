@@ -108,22 +108,22 @@
 
 
 ;;;; World Generation ---------------------------------------------------------
-(defun generate-world% ()
-  (setf *terrain* (ap.generation::generate-heightmap))
-  (destructuring-bind (map-width map-height) (array-dimensions *terrain*)
-    (setf *view-x* (truncate map-width 2)
-          *view-y* (truncate map-height 2)))
-  (setf *player* (make-player)))
-
 (defun generate-world ()
-  (with-dims (20 2)
+  (with-dims (30 (+ 2 2))
     (with-panel-and-window
         (pan win *width* *height*
              (center *width* *screen-width*)
              (center *height* *screen-height*))
-      (write-string-centered win "Generating world..." 0)
-      (redraw)
-      (generate-world%)))
+      (border win)
+      (progn
+        (write-string-left win "Generating terrain..." 1 1)
+        (redraw)
+        (setf *terrain* (ap.generation::generate-heightmap)
+              *view-x* 0 *view-y* 0))
+      (progn
+        (write-string-left win "Spawning player..." 1 2)
+        (redraw)
+        (setf *player* (make-player)))))
   (world-map))
 
 
