@@ -19,7 +19,7 @@
                         "Alone, like you."))))
 
 (defun feeling ()
-  (format nil "You suddenly have a ~A feeling.~2%~A"
+  (format nil "You suddenly have ~A feeling.~2%~A"
           (random-elt #("a good" "a bad" "a worrying" "a hopeful" "an uneasy"))
           (random-elt #("It passes after a moment."
                         "It lingers for a while."))))
