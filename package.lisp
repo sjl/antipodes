@@ -60,6 +60,7 @@
     :coords/y
     :coords?
     :coords-lookup
+    :coords-move-entity
 
     :visible
     :visible?

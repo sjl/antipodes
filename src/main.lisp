@@ -109,6 +109,7 @@
 
 ;;;; World Generation ---------------------------------------------------------
 (defun generate-world ()
+  (clear-entities)
   (with-dims (30 (+ 2 2))
     (with-panel-and-window
         (pan win *width* *height*
@@ -165,6 +166,7 @@
       (with-color (window (visible/color entity))
         (charms:write-string-at-point window (visible/glyph entity) sx sy)))))
 
+
 (defun render-sidebar (window)
   (charms:clear-window window)
   (border window)
@@ -178,13 +180,20 @@
                      1 2))
 
 
+(defun move-player (dx dy)
+  (let ((player *player*))
+    (coords-move-entity player
+                        (+ (coords/x player) dx)
+                        (+ (coords/y player) dy))))
+
 (defun world-map-input (window)
   (case (charms:get-char window)
     (#\q :quit)
-    (:left  (zapf *view-x* (clamp (1- %) 0 20000)))
-    (:right (zapf *view-x* (clamp (1+ %) 0 20000)))
-    (:up    (zapf *view-y* (clamp (1- %) 0 20000)))
-    (:down  (zapf *view-y* (clamp (1+ %) 0 20000)))))
+    (:left (move-player -1 0))
+    (:right (move-player 1 0))
+    (:up    (move-player 0 -1))
+    (:down  (move-player 0 1))))
+
 
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 1))
