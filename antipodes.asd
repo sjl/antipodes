@@ -29,5 +29,6 @@
                                (:file "holdable")
                                (:file "visible")))
                  (:module "entities" :serial t
-                  :components ((:file "player")))
+                  :components ((:file "food")
+                               (:file "player")))
                  (:file "main")))))

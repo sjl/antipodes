@@ -22,9 +22,11 @@
     :write-lines-left
     :write-lines-centered
     :with-dims
+    :with-window-dims
     :defcolors
     :with-color
     :init-colors
+    :read-file-into-form
     ))
 
 (defpackage :ap.generation
@@ -60,6 +62,10 @@
     :player-inventory-empty-p
     :player-get
     :player-drop
+
+    :food
+    :make-food
+    :food/energy
 
     :coords
     :coords/x

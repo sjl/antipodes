@@ -24,14 +24,7 @@
 (defparameter *wat* nil)
 (defparameter *player* nil)
 (defparameter *sidebar-width* 30)
-
-
-;;;; More Utils Lol
-(defmacro with-window-dims (window &body body)
-  (with-gensyms (w h)
-    `(multiple-value-bind (,w ,h) (charms:window-dimensions ,window)
-       (with-dims (,w ,h)
-         ,@body))))
+(defparameter *food-density* 1/6000)
 
 
 ;;;; Colors -------------------------------------------------------------------
@@ -108,23 +101,45 @@
 
 
 ;;;; World Generation ---------------------------------------------------------
+(defun underwaterp (height)
+  (< height 0.05))
+
+(defun generate-terrain ()
+  (setf *terrain* (ap.generation::generate-heightmap)
+        *view-x* 0 *view-y* 0))
+
+(defun spawn-player ()
+  (setf *player* (make-player)))
+
+(defun place-food ()
+  (iterate
+    (with remaining = (round (* *food-density*
+                                ap.generation::*map-size*
+                                ap.generation::*map-size*)))
+    (until (zerop remaining))
+    (for x = (random ap.generation::*map-size*))
+    (for y = (random ap.generation::*map-size*))
+    (when (not (underwaterp (aref *terrain* x y)))
+      (make-food x y)
+      (decf remaining))))
+
 (defun generate-world ()
   (clear-entities)
-  (with-dims (30 (+ 2 2))
+  (with-dims (30 (+ 2 3))
     (with-panel-and-window
         (pan win *width* *height*
              (center *width* *screen-width*)
              (center *height* *screen-height*))
       (border win)
-      (progn
-        (write-string-left win "Generating terrain..." 1 1)
-        (redraw)
-        (setf *terrain* (ap.generation::generate-heightmap)
-              *view-x* 0 *view-y* 0))
-      (progn
-        (write-string-left win "Spawning player..." 1 2)
-        (redraw)
-        (setf *player* (make-player)))))
+      (progn (write-string-left win "Generating terrain..." 1 1)
+             (redraw)
+             (generate-terrain))
+      (progn (write-string-left win "Placing food..." 1 2)
+             (redraw)
+             (place-food))
+      (progn (write-string-left win "Spawning player..." 1 3)
+             (redraw)
+             (spawn-player))))
   (world-map))
 
 
@@ -149,6 +164,21 @@
                (coords/x *player*)
                (coords/y *player*)))
 
+(defun render-items (window)
+  (let ((items (-<> (coords-lookup (coords/x *player*)
+                                   (coords/y *player*))
+                 (remove-if-not #'holdable? <>))))
+    (when items
+      (if (= (length items) 1)
+        (write-string-left window "The following thing is here:" 0 0)
+        (write-string-left window "The following things are here:" 0 0))
+      (iterate
+        (for item :in items)
+        (for y :from 1)
+        (write-string-left window
+                           (format nil "  ~A" (holdable/description item))
+                           0 1)))))
+
 (defun render-map (window)
   (iterate
     (with terrain = *terrain*)
@@ -161,7 +191,10 @@
     (for (values glyph color) = (terrain-char (aref terrain x y)))
     (with-color (window color)
       (charms:write-char-at-point window glyph sx sy))
-    (for entity = (find-if #'visible? (coords-lookup x y)))
+    (for entities = (coords-lookup x y))
+    (for entity = (if (member *player* entities)
+                    *player*
+                    (find-if #'visible? entities)))
     (when entity
       (with-color (window (visible/color entity))
         (charms:write-string-at-point window (visible/glyph entity) sx sy)))))
@@ -214,7 +247,8 @@
           (render-sidebar bar-win))
         (with-window-dims map-win
           (center-view-on-player *width* *height*)
-          (render-map map-win))
+          (render-map map-win)
+          (render-items map-win))
         (redraw)
         (case (world-map-input bar-win)
           (:tick (tick-player *player*))

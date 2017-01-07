@@ -72,11 +72,17 @@
            (for y :from start-y)
            (write-string-centered window line y)))
 
+
 (defmacro with-dims ((width height) &body body)
   `(let ((ap::*width* ,width)
          (ap::*height* ,height))
      ,@body))
 
+(defmacro with-window-dims (window &body body)
+  (with-gensyms (w h)
+    `(multiple-value-bind (,w ,h) (charms:window-dimensions ,window)
+       (with-dims (,w ,h)
+         ,@body))))
 
 (defmacro defcolors (&rest colors)
   `(progn
@@ -102,3 +108,9 @@
 ;;;; Maths --------------------------------------------------------------------
 (defun center (size max)
   (truncate (- max size) 2))
+
+
+;;;; File I/O -----------------------------------------------------------------
+(defun read-file-into-form (filename)
+  (with-open-file (s filename)
+    (read s)))
