@@ -22,7 +22,6 @@
                (:module "src" :serial t
                 :components
                 ((:file "utilities")
-                 (:file "world-generation")
                  (:module "aspects" :serial t
                   :components ((:file "coordinates")
                                (:file "holdable")

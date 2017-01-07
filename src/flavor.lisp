@@ -30,5 +30,5 @@
 
 (defun random-flavor ()
   (let ((r (random 1.0)))
-    (cond ((< r 0.50) (animal))
+    (cond ((< r 0.20) (animal))
           (t          (wind)))))
