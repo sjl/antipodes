@@ -6,7 +6,11 @@
   :license "MIT/X11"
   :version "1.0.0"
 
-  :depends-on ()
+  :depends-on (:beast
+               :cl-arrows
+               :cl-charms
+               :iterate
+               :losh)
 
   :serial t
   :components ((:module "vendor" :serial t
