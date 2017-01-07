@@ -22,6 +22,7 @@
                (:module "src" :serial t
                 :components
                 ((:file "utilities")
+                 (:file "config")
                  (:module "aspects" :serial t
                   :components ((:file "coordinates")
                                (:file "holdable")
@@ -29,4 +30,5 @@
                  (:module "entities" :serial t
                   :components ((:file "food")
                                (:file "player")))
+                 (:file "flavor")
                  (:file "main")))))

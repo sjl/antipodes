@@ -1,6 +1,5 @@
 (in-package :ap)
 
-
 ;;;; Data ---------------------------------------------------------------------
 (defparameter *logo* (read-file-into-string "data/logo.txt"))
 (defparameter *intro1* (read-file-into-string "data/intro1.txt"))
@@ -22,18 +21,11 @@
 (defparameter *view-x* nil)
 (defparameter *view-y* nil)
 
-(defparameter *wat* nil)
 (defparameter *player* nil)
-(defparameter *sidebar-width* 30)
-(defparameter *food-density* 1/6000)
 
 
 ;;;; Heightmap ----------------------------------------------------------------
 ;;; TODO: Switch to something less samey
-(defparameter *map-size* 2000)
-(defparameter *noise-scale* 0.03)
-(defparameter *noise-seed-x* (random 1000.0))
-(defparameter *noise-seed-y* (random 1000.0))
 
 (defun make-empty-heightmap ()
   (make-array (list *map-size* *map-size*)
