@@ -17,11 +17,25 @@
 (defparameter *height* nil)
 
 (defparameter *terrain* nil)
+(defparameter *structures* nil)
 
 (defparameter *view-x* nil)
 (defparameter *view-y* nil)
 
 (defparameter *player* nil)
+
+
+;;;; Colors -------------------------------------------------------------------
+(defcolors
+  (+white-black+  charms/ll:COLOR_WHITE   charms/ll:COLOR_BLACK)
+  (+blue-black+   charms/ll:COLOR_BLUE    charms/ll:COLOR_BLACK)
+  (+cyan-black+   charms/ll:COLOR_CYAN    charms/ll:COLOR_BLACK)
+  (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
+  (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
+  (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
+
+  (+black-white+  charms/ll:COLOR_BLACK   charms/ll:COLOR_WHITE)
+  )
 
 
 ;;;; Heightmap ----------------------------------------------------------------
@@ -49,18 +63,79 @@
     (noise-heightmap heightmap)
     heightmap))
 
+(defun random-coord ()
+  (random *map-size*))
 
-;;;; Colors -------------------------------------------------------------------
-(defcolors
-  (+white-black+  charms/ll:COLOR_WHITE   charms/ll:COLOR_BLACK)
-  (+blue-black+   charms/ll:COLOR_BLUE    charms/ll:COLOR_BLACK)
-  (+cyan-black+   charms/ll:COLOR_CYAN    charms/ll:COLOR_BLACK)
-  (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
-  (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
-  (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
+(defun underwaterp (height)
+  (< height -0.05))
 
-  (+black-white+  charms/ll:COLOR_BLACK   charms/ll:COLOR_WHITE)
-  )
+(defun deepwaterp (height)
+  (< height -0.20))
+
+
+;;;; Ruins --------------------------------------------------------------------
+(defun make-empty-structures ()
+  (make-array (list *map-size* *map-size*)))
+
+(defun passablep (structure)
+  (if (member structure '(:wall))
+    nil
+    t))
+
+(defun add-intact-ruin (width height start-x start-y)
+  (iterate (for-nested ((x :from start-x :below (+ start-x width))
+                        (y :from start-y :below (+ start-y height))))
+           (setf (aref *structures* x y) :floor))
+  (iterate (repeat width)
+           (for x :from start-x)
+           (setf (aref *structures* x start-y) :wall
+                 (aref *structures* x (+ start-y height -1)) :wall))
+  (iterate (repeat height)
+           (for y :from start-y)
+           (setf (aref *structures* start-x y) :wall
+                 (aref *structures* (+ start-x width) y) :wall)))
+
+(defun add-ruin-door (width height start-x start-y)
+  (setf (aref *structures* (+ start-x (random width))
+              (if (randomp)
+                start-y
+                (+ start-y height -1)))
+        nil))
+
+(defun decay-ruin (width height start-x start-y condition)
+  (iterate (for-nested ((x :from start-x :to (+ start-x width))
+                        (y :from start-y :below (+ start-y height))))
+           (when (or (randomp condition)
+                     (and (deepwaterp (aref *terrain* x y))
+                          (not (eq :wall (aref *structures* x y)))))
+             (setf (aref *structures* x y) nil))))
+
+(defun place-ruin-food (width height start-x start-y)
+  (iterate (repeat (random 4))
+           (make-food
+             (random-range (1+ start-x) (+ start-x width))
+             (random-range (1+ start-y) (+ start-y height)))))
+
+(defun add-ruin-trigger (width height start-x start-y)
+  (make-ruin (+ start-x (truncate width 2))
+             (+ start-y (truncate height 2))))
+
+(defun add-ruin ()
+  (let ((x (clamp 0 (- *map-size* 50) (random-coord)))
+        (y (clamp 0 (- *map-size* 50) (random-coord)))
+        (width (max 5 (truncate (random-gaussian *ruin-size-mean* *ruin-size-dev*))))
+        (height (max 5 (truncate (random-gaussian *ruin-size-mean* *ruin-size-dev*))))
+        (condition (random-range 0.1 0.8)))
+    (add-intact-ruin width height x y)
+    (add-ruin-door width height x y)
+    (decay-ruin width height x y condition)
+    (place-ruin-food width height x y)
+    (add-ruin-trigger width height x y)))
+
+(defun fill-ruins ()
+  (iterate
+    (repeat (round (* *ruin-density* *map-size* *map-size*)))
+    (add-ruin)))
 
 
 ;;;; Intro --------------------------------------------------------------------
@@ -124,9 +199,6 @@
 
 
 ;;;; World Generation ---------------------------------------------------------
-(defun underwaterp (height)
-  (< height 0.05))
-
 (defun generate-terrain ()
   (setf *terrain* (generate-heightmap)
         *view-x* 0 *view-y* 0))
@@ -140,15 +212,19 @@
                                 *map-size*
                                 *map-size*)))
     (until (zerop remaining))
-    (for x = (random *map-size*))
-    (for y = (random *map-size*))
+    (for x = (random-coord))
+    (for y = (random-coord))
     (when (not (underwaterp (aref *terrain* x y)))
       (make-food x y)
       (decf remaining))))
 
+(defun generate-structures ()
+  (setf *structures* (make-empty-structures))
+  (fill-ruins))
+
 (defun generate-world ()
   (clear-entities)
-  (with-dims (30 (+ 2 3))
+  (with-dims (30 (+ 2 4))
     (with-panel-and-window
         (pan win *width* *height*
              (center *width* *screen-width*)
@@ -157,10 +233,13 @@
       (progn (write-string-left win "Generating terrain..." 1 1)
              (redraw)
              (generate-terrain))
-      (progn (write-string-left win "Placing food..." 1 2)
+      (progn (write-string-left win "Generating structures..." 1 2)
+             (redraw)
+             (generate-structures))
+      (progn (write-string-left win "Placing food..." 1 3)
              (redraw)
              (place-food))
-      (progn (write-string-left win "Spawning player..." 1 3)
+      (progn (write-string-left win "Spawning player..." 1 4)
              (redraw)
              (spawn-player))))
   (world-map))
@@ -190,7 +269,13 @@
         ((< height  0.05) (values #\` +yellow-black+)) ; sand
         ((< height  0.40) (values #\. +white-black+)) ; dirt
         ((< height  0.55) (values #\^ +white-black+)) ; hills
-        (t                (values #\# +white-black+)))) ; mountains
+        (t                (values #\* +white-black+))))
+
+(defun structure-char (contents)
+  (case contents
+    (:wall #\#)
+    (:floor #\_)))
+
 
 (defun clamp-view (coord size)
   (clamp 0 (- *map-size* size 1) coord))
@@ -204,18 +289,27 @@
                (coords/x *player*)
                (coords/y *player*)))
 
+
 (defun render-items (window)
-  (let ((items (-<> (coords-lookup (coords/x *player*)
-                                   (coords/y *player*))
-                 (remove-if-not #'holdable? <>))))
+  (let* ((x (coords/x *player*))
+         (y (coords/y *player*))
+         (items (-<> (coords-lookup x y)
+                  (remove-if-not #'holdable? <>)))
+         (here-string (if (underwaterp (aref *terrain* x y))
+                        "floating here"
+                        "here")))
     (when items
       (if (= (length items) 1)
         (write-string-left
           window
-          (format nil "You see ~A here" (holdable/description (first items)))
+          (format nil "You see ~A ~A"
+                  (holdable/description (first items))
+                  here-string)
           0 0)
         (progn
-          (write-string-left window "The following things are here:" 0 0)
+          (write-string-left window (format nil "The following things are ~A:"
+                                            here-string)
+                             0 0)
           (iterate
             (for item :in items)
             (for y :from 1)
@@ -226,15 +320,22 @@
 (defun render-map (window)
   (iterate
     (with terrain = *terrain*)
+    (with structures = *structures*)
     (with vx = *view-x*)
     (with vy = *view-y*)
-    (for-nested ((sx :from 0 :below *width*)
-                 (sy :from 0 :below *height*)))
+    (for-nested ((sx :from 0 :below (1- *width*))
+                 (sy :from 0 :below (1- *height*))))
     (for x = (+ sx vx))
     (for y = (+ sy vy))
-    (for (values glyph color) = (terrain-char (aref terrain x y)))
-    (with-color (window color)
-      (charms:write-char-at-point window glyph sx sy))
+
+    (for (values terrain-glyph terrain-color) = (terrain-char (aref terrain x y)))
+    (with-color (window terrain-color)
+      (charms:write-char-at-point window terrain-glyph sx sy))
+
+    (for structure-glyph = (structure-char (aref structures x y)))
+    (when structure-glyph
+      (charms:write-char-at-point window structure-glyph sx sy))
+
     (for entities = (coords-lookup x y))
     (for entity = (if (member *player* entities)
                     *player*
@@ -268,10 +369,11 @@
 
 
 (defun move-player (dx dy)
-  (let ((player *player*))
-    (coords-move-entity player
-                        (+ (coords/x player) dx)
-                        (+ (coords/y player) dy))))
+  (let* ((player *player*)
+         (dest-x (+ (coords/x player) dx))
+         (dest-y (+ (coords/y player) dy)))
+    (when (passablep (aref *structures* dest-x dest-y))
+      (coords-move-entity player dest-x dest-y))))
 
 (defun world-map-input (window)
   (case (charms:get-char window)
@@ -282,6 +384,13 @@
     (:up    (move-player 0 -1) :tick)
     (:down  (move-player 0 1) :tick)))
 
+
+(defun check-triggers ()
+  (iterate (for trigger :in (-<> *player*
+                              (coords-nearby <> 10)
+                              (remove-if-not #'trigger? <>)))
+           (popup (trigger/text trigger))
+           (destroy-entity trigger)))
 
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 1))
@@ -301,7 +410,8 @@
           (if (ap.flavor:flavorp)
             (popup (ap.flavor:random-flavor))
             (case (world-map-input bar-win)
-              (:tick (tick-player *player*))
+              (:tick (tick-player *player*)
+                     (check-triggers))
               (:quit (return))
               (:help (popup *help*))))))))
   nil)

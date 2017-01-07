@@ -28,7 +28,7 @@
   (when (within-bounds-p x y)
     (aref *world-contents* x y)))
 
-(defun nearby (entity &optional (radius 1))
+(defun coords-nearby (entity &optional (radius 1))
   (remove entity
           (iterate (with x = (coords/x entity))
                    (with y = (coords/y entity))

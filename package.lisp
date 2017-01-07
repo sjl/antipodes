@@ -57,11 +57,19 @@
     :make-food
     :food/energy
 
+    :trigger
+    :trigger?
+    :trigger/text
+
+    :ruin
+    :make-ruin
+
     :coords
     :coords/x
     :coords/y
     :coords?
     :coords-lookup
+    :coords-nearby
     :coords-move-entity
 
     :holdable

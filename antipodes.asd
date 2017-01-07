@@ -26,9 +26,11 @@
                  (:module "aspects" :serial t
                   :components ((:file "coordinates")
                                (:file "holdable")
+                               (:file "trigger")
                                (:file "visible")))
                  (:module "entities" :serial t
                   :components ((:file "food")
+                               (:file "ruin")
                                (:file "player")))
                  (:file "flavor")
                  (:file "main")))))

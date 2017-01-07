@@ -38,7 +38,7 @@
   "hubbard squash"
   "pickled jalapenos"
   "kale"
-  "kidney bean"
+  "kidney beans"
   "kohlrabi"
   "lavender"
   "leeks"
