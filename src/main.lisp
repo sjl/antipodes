@@ -106,7 +106,7 @@
   (< height 0.05))
 
 (defun generate-terrain ()
-  (setf *terrain* (ap.generation::generate-heightmap)
+  (setf *terrain* (generate-heightmap)
         *view-x* 0 *view-y* 0))
 
 (defun spawn-player ()
@@ -115,11 +115,11 @@
 (defun place-food ()
   (iterate
     (with remaining = (round (* *food-density*
-                                ap.generation::*map-size*
-                                ap.generation::*map-size*)))
+                                *map-size*
+                                *map-size*)))
     (until (zerop remaining))
-    (for x = (random ap.generation::*map-size*))
-    (for y = (random ap.generation::*map-size*))
+    (for x = (random *map-size*))
+    (for y = (random *map-size*))
     (when (not (underwaterp (aref *terrain* x y)))
       (make-food x y)
       (decf remaining))))
@@ -156,9 +156,9 @@
         (charms:clear-window win)
         (border win)
         (write-lines-left win lines 1 1)
-        (write-string-centered win "Press any key" (1- *height*))
+        (write-string-centered win "Press space" (1- *height*))
         (redraw)
-        (charms:get-char win)))))
+        (iterate (until (eql #\space (charms:get-char win))))))))
 
 
 ;;;; World Map ----------------------------------------------------------------
@@ -171,7 +171,7 @@
         (t                (values #\# +white-black+)))) ; mountains
 
 (defun clamp-view (coord size)
-  (clamp 0 (- ap.generation::*map-size* size 1) coord))
+  (clamp 0 (- *map-size* size 1) coord))
 
 (defun center-view (width height x y)
   (setf *view-x* (clamp-view (- x (truncate width 2)) width)
@@ -188,14 +188,18 @@
                  (remove-if-not #'holdable? <>))))
     (when items
       (if (= (length items) 1)
-        (write-string-left window "The following thing is here:" 0 0)
-        (write-string-left window "The following things are here:" 0 0))
-      (iterate
-        (for item :in items)
-        (for y :from 1)
-        (write-string-left window
-                           (format nil "  ~A" (holdable/description item))
-                           0 1)))))
+        (write-string-left
+          window
+          (format nil "You see ~A here" (holdable/description (first items)))
+          0 0)
+        (progn
+          (write-string-left window "The following things are here:" 0 0)
+          (iterate
+            (for item :in items)
+            (for y :from 1)
+            (write-string-left window
+                               (format nil "  ~A" (holdable/description item))
+                               0 1)))))))
 
 (defun render-map (window)
   (iterate
@@ -272,10 +276,12 @@
         (redraw)
         (if-first-time
           (popup "Head north!")
-          (case (world-map-input bar-win)
-            (:tick (tick-player *player*))
-            (:quit (return))
-            (:help (popup *help*)))))))
+          (if (ap.flavor:flavorp)
+            (popup (ap.flavor:random-flavor))
+            (case (world-map-input bar-win)
+              (:tick (tick-player *player*))
+              (:quit (return))
+              (:help (popup *help*))))))))
   nil)
 
 

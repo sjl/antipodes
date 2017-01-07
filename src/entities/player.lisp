@@ -27,10 +27,10 @@
 
 (defun make-player ()
   (create-entity 'player
-                 :coords/x (round (* 0.5 ap.generation::*map-size*))
-                 :coords/y (round (* 0.9 ap.generation::*map-size*))
-                 :visible/glyph "@"
-                 :visible/color ap::+black-white+))
+    :coords/x (round (* 0.5 ap::*map-size*))
+    :coords/y (round (* 0.9 ap::*map-size*))
+    :visible/glyph "@"
+    :visible/color ap::+black-white+))
 
 
 (defun tick-player (player)

@@ -29,16 +29,6 @@
     :read-file-into-form
     ))
 
-(defpackage :ap.generation
-  (:use
-    :cl
-    :iterate
-    :cl-arrows
-    :losh
-    :beast
-    :ap.utilities
-    :ap.quickutils)
-  (:export))
 
 (defpackage :ap.entities
   (:use
@@ -83,6 +73,18 @@
     :visible/glyph
     :visible/color
     ))
+
+(defpackage :ap.flavor
+  (:use
+    :cl
+    :iterate
+    :cl-arrows
+    :losh
+    :ap.utilities
+    :ap.quickutils)
+  (:export
+    :flavorp
+    :random-flavor))
 
 (defpackage :ap
   (:use

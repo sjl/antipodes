@@ -1,4 +1,4 @@
-(in-package :ap.generation)
+(in-package :ap)
 
 ;;;; Parameters ---------------------------------------------------------------
 (defparameter *map-size* 2000)

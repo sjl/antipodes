@@ -1,15 +1,15 @@
 (in-package :ap.entities)
 
 (defparameter *world-contents*
-  (make-array (list ap.generation::*map-size*
-                    ap.generation::*map-size*)
+  (make-array (list ap::*map-size*
+                    ap::*map-size*)
     :initial-element nil))
 
 (define-aspect coords x y)
 
 (defun within-bounds-p (x y)
-  (and (in-range-p 0 x ap.generation::*map-size*)
-       (in-range-p 0 y ap.generation::*map-size*)))
+  (and (in-range-p 0 x ap::*map-size*)
+       (in-range-p 0 y ap::*map-size*)))
 
 (defun coords-insert-entity (e)
   (push e (aref *world-contents* (coords/x e) (coords/y e))))
