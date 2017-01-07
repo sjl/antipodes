@@ -18,6 +18,25 @@
 
 (defparameter *terrain* nil)
 
+(defparameter *view-x* nil)
+(defparameter *view-y* nil)
+
+(defparameter *wat* nil)
+
+
+;;;; Colors -------------------------------------------------------------------
+(defcolors
+  (+white-black+  charms/ll:COLOR_WHITE   charms/ll:COLOR_BLACK)
+  (+blue-black+   charms/ll:COLOR_BLUE    charms/ll:COLOR_BLACK)
+  (+cyan-black+   charms/ll:COLOR_CYAN    charms/ll:COLOR_BLACK)
+  (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
+  (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
+  (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
+
+  (+black-white+  charms/ll:COLOR_BLACK   charms/ll:COLOR_WHITE)
+  )
+
+
 ;;;; Intro --------------------------------------------------------------------
 (defmacro dialog (&body body)
   `(with-dims (50 10)
@@ -73,12 +92,17 @@
       (write-lines-centered win *logo* 0)
       (redraw)
       (charms:get-char win)))
-  (intro1))
+  ; (intro1)
+  (generate-world)
+  )
 
 
 ;;;; World Generation ---------------------------------------------------------
 (defun generate-world% ()
-  (setf *terrain* (ap.gen::generate-heightmap)))
+  (setf *terrain* (ap.gen::generate-heightmap))
+  (destructuring-bind (map-width map-height) (array-dimensions *terrain*)
+    (setf *view-x* (truncate map-width 2)
+          *view-y* (truncate map-height 2))))
 
 (defun generate-world ()
   (with-dims (20 2)
@@ -94,16 +118,34 @@
 
 ;;;; World Map ----------------------------------------------------------------
 (defun terrain-char (height)
-  (cond ((< height 0.0) #\~)
-        (t #\.)))
+  (cond ((< height -0.20) (values #\~ +blue-black+)) ; deep water
+        ((< height -0.05) (values #\~ +cyan-black+)) ; shallow water
+        ((< height  0.05) (values #\` +yellow-black+)) ; sand
+        ((< height  0.40) (values #\. +white-black+)) ; dirt
+        ((< height  0.55) (values #\^ +white-black+)) ; hills
+        (t                (values #\# +white-black+)))) ; mountains
 
 (defun render-map (window)
   (iterate
     (with terrain = *terrain*)
+    (with vx = *view-x*)
+    (with vy = *view-y*)
     (for-nested ((sx :from 0 :below *width*)
                  (sy :from 0 :below *height*)))
-    (for glyph = (terrain-char (aref terrain sx sy)))
-    (charms:write-char-at-point window glyph sx sy)))
+    (for x = (+ sx vx))
+    (for y = (+ sy vy))
+    (for (values glyph color) = (terrain-char (aref terrain x y)))
+    (with-color (window color)
+      (charms:write-char-at-point window glyph sx sy))))
+
+
+(defun world-map-input (window)
+  (case (charms:get-char window)
+    (#\q :quit)
+    (:left  (zapf *view-x* (clamp (1- %) 0 20000)))
+    (:right (zapf *view-x* (clamp (1+ %) 0 20000)))
+    (:up    (zapf *view-y* (clamp (1- %) 0 20000)))
+    (:down  (zapf *view-y* (clamp (1+ %) 0 20000)))))
 
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 2))
@@ -111,7 +153,7 @@
       (iterate
         (render-map map-win)
         (redraw)
-        (until (eql #\q (charms:get-char map-win))))))
+        (until (eql :quit (world-map-input map-win))))))
   nil)
 
 
@@ -121,7 +163,9 @@
     (charms:disable-echoing)
     (charms:enable-raw-input :interpret-control-characters t)
     (charms:enable-extra-keys t)
-    ; (charms:enable-non-blocking-mode t)
+    (charms/ll:start-color)
+    (charms:clear-window t)
+    (init-colors)
 
     ; todo: handle resizes
     (setf (values *screen-width* *screen-height*)

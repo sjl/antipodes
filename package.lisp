@@ -22,9 +22,23 @@
     :write-lines-left
     :write-lines-centered
     :with-dims
+    :defcolors
+    :with-color
+    :init-colors
     ))
 
 (defpackage :ap.gen
+  (:use
+    :cl
+    :iterate
+    :cl-arrows
+    :losh
+    :beast
+    :ap.utilities
+    :ap.quickutils)
+  (:export))
+
+(defpackage :ap.ent
   (:use
     :cl
     :iterate

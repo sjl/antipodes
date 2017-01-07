@@ -78,6 +78,27 @@
      ,@body))
 
 
+(defmacro defcolors (&rest colors)
+  `(progn
+    ,@(iterate (for n :from 0)
+               (for (constant nil nil) :in colors)
+               (collect `(define-constant ,constant ,n)))
+    (defun init-colors ()
+      ,@(iterate
+          (for (constant fg bg) :in colors)
+          (collect `(charms/ll:init-pair ,constant ,fg ,bg))))))
+
+(defmacro with-color ((window color) &body body)
+  (once-only (window color)
+    `(unwind-protect
+       (progn
+         (charms/ll:wattron (charms::window-pointer ,window)
+                            (charms/ll:color-pair ,color))
+         ,@body)
+       (charms/ll:wattroff (charms::window-pointer ,window)
+                           (charms/ll:color-pair ,color)))))
+
+
 ;;;; Maths --------------------------------------------------------------------
 (defun center (size max)
   (truncate (- max size) 2))

@@ -1,20 +1,26 @@
 (in-package :ap.gen)
 
 
-(define-constant +chunk-size+ (expt 2 8))
+(defparameter *map-size* 2000)
+(defparameter *noise-scale* 0.03)
+(defparameter *noise-seed-x* (random 1000.0))
+(defparameter *noise-seed-y* (random 1000.0))
 
 (defun make-empty-heightmap ()
-  (make-array (list +chunk-size+ +chunk-size+)
+  (make-array (list *map-size* *map-size*)
     :element-type 'single-float
     :initial-element 0.0))
 
 (defun noise-heightmap (heightmap)
   (iterate
+    (with ox = *noise-seed-x*)
+    (with oy = *noise-seed-x*)
+    (with scale = *noise-scale*)
     (for (val x y) :in-array heightmap)
     (setf (aref heightmap x y)
           (black-tie:perlin-noise-single-float
-            (* x 0.1)
-            (* y 0.1)
+            (+ ox (* x scale))
+            (+ oy (* y scale))
             0.0))))
 
 (defun generate-heightmap ()

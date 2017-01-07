@@ -24,4 +24,6 @@
                 ((:file "utilities")
                  (:module "gen" :serial t
                   :components ((:file "world")))
+                 (:module "ent" :serial t
+                  :components ((:file "player")))
                  (:file "main")))))
