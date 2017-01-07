@@ -9,6 +9,7 @@
   :depends-on (:beast
                :cl-arrows
                :cl-charms
+               :cl-strings
                :iterate
                :losh)
 
@@ -18,4 +19,8 @@
                              (:file "quickutils")))
                (:file "package")
                (:module "src" :serial t
-                :components ((:file "main")))))
+                :components
+                ((:file "utilities")
+                 (:module "gen" :serial t
+                  :components ((:file "world")))
+                 (:file "main")))))
