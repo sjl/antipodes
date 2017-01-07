@@ -16,6 +16,7 @@
 (defparameter *width* nil)
 (defparameter *height* nil)
 
+(defparameter *terrain* nil)
 
 ;;;; Intro --------------------------------------------------------------------
 (defmacro dialog (&body body)
@@ -59,7 +60,7 @@
 (defun intro6 ()
   (if (eq :left (dialog (write-lines-left win *intro6* 1 1)))
     (intro5)
-    nil))
+    (generate-world)))
 
 
 ;;;; Title --------------------------------------------------------------------
@@ -71,8 +72,47 @@
              (center *height* *screen-height*))
       (write-lines-centered win *logo* 0)
       (redraw)
-      (charms:get-char win))
-    (intro1)))
+      (charms:get-char win)))
+  (intro1))
+
+
+;;;; World Generation ---------------------------------------------------------
+(defun generate-world% ()
+  (setf *terrain* (ap.gen::generate-heightmap)))
+
+(defun generate-world ()
+  (with-dims (20 2)
+    (with-panel-and-window
+        (pan win *width* *height*
+             (center *width* *screen-width*)
+             (center *height* *screen-height*))
+      (write-string-centered win "Generating world..." 0)
+      (redraw)
+      (generate-world%)))
+  (world-map))
+
+
+;;;; World Map ----------------------------------------------------------------
+(defun terrain-char (height)
+  (cond ((< height 0.0) #\~)
+        (t #\.)))
+
+(defun render-map (window)
+  (iterate
+    (with terrain = *terrain*)
+    (for-nested ((sx :from 0 :below *width*)
+                 (sy :from 0 :below *height*)))
+    (for glyph = (terrain-char (aref terrain sx sy)))
+    (charms:write-char-at-point window glyph sx sy)))
+
+(defun world-map ()
+  (with-dims ((- *screen-width* 2) (- *screen-height* 2))
+    (with-panel-and-window (map-pan map-win *width* *height* 0 0)
+      (iterate
+        (render-map map-win)
+        (redraw)
+        (until (eql #\q (charms:get-char map-win))))))
+  nil)
 
 
 ;;;; Main ---------------------------------------------------------------------
