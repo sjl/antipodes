@@ -27,7 +27,7 @@
     :init-colors
     ))
 
-(defpackage :ap.gen
+(defpackage :ap.generation
   (:use
     :cl
     :iterate
@@ -38,7 +38,7 @@
     :ap.quickutils)
   (:export))
 
-(defpackage :ap.ent
+(defpackage :ap.entities
   (:use
     :cl
     :iterate

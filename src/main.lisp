@@ -32,8 +32,6 @@
   (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
   (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
   (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
-
-  (+black-white+  charms/ll:COLOR_BLACK   charms/ll:COLOR_WHITE)
   )
 
 
@@ -99,7 +97,7 @@
 
 ;;;; World Generation ---------------------------------------------------------
 (defun generate-world% ()
-  (setf *terrain* (ap.gen::generate-heightmap))
+  (setf *terrain* (ap.generation::generate-heightmap))
   (destructuring-bind (map-width map-height) (array-dimensions *terrain*)
     (setf *view-x* (truncate map-width 2)
           *view-y* (truncate map-height 2))))

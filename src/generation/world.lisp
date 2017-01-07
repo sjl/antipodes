@@ -1,10 +1,14 @@
-(in-package :ap.gen)
+(in-package :ap.generation)
 
-
+;;;; Parameters ---------------------------------------------------------------
 (defparameter *map-size* 2000)
 (defparameter *noise-scale* 0.03)
 (defparameter *noise-seed-x* (random 1000.0))
 (defparameter *noise-seed-y* (random 1000.0))
+
+
+;;;; Heightmap ----------------------------------------------------------------
+;;; TODO: Switch to something less samey
 
 (defun make-empty-heightmap ()
   (make-array (list *map-size* *map-size*)

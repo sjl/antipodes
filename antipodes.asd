@@ -22,8 +22,10 @@
                (:module "src" :serial t
                 :components
                 ((:file "utilities")
-                 (:module "gen" :serial t
+                 (:module "generation" :serial t
                   :components ((:file "world")))
-                 (:module "ent" :serial t
+                 (:module "aspects" :serial t
+                  :components ((:file "coordinates")))
+                 (:module "entities" :serial t
                   :components ((:file "player")))
                  (:file "main")))))
