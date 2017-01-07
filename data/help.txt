@@ -1,0 +1,8 @@
+Summer has begun in the southern hemisphere.
+You must head to the North Pole to survive.
+
+CONTROLS
+←↑↓→ - move
+   q - quit
+   g - get item
+   d - drop item

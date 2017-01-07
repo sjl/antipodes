@@ -9,6 +9,7 @@
 (defparameter *intro4* (read-file-into-string "data/intro4.txt"))
 (defparameter *intro5* (read-file-into-string "data/intro5.txt"))
 (defparameter *intro6* (read-file-into-string "data/intro6.txt"))
+(defparameter *help* (read-file-into-string "data/help.txt"))
 
 (defparameter *screen-width* nil)
 (defparameter *screen-height* nil)
@@ -143,6 +144,23 @@
   (world-map))
 
 
+;;;; Popups -------------------------------------------------------------------
+(defun popup (contents)
+  (let ((lines (cl-strings:split contents #\newline)))
+    (with-dims ((+ 3 (apply #'max 13 (mapcar #'length lines)))
+                (+ 3 (length lines)))
+      (with-panel-and-window
+          (pan win *width* *height*
+               (center *width* *screen-width*)
+               (center *height* *screen-height*))
+        (charms:clear-window win)
+        (border win)
+        (write-lines-left win lines 1 1)
+        (write-string-centered win "Press any key" (1- *height*))
+        (redraw)
+        (charms:get-char win)))))
+
+
 ;;;; World Map ----------------------------------------------------------------
 (defun terrain-char (height)
   (cond ((< height -0.20) (values #\~ +blue-black+)) ; deep water
@@ -219,7 +237,8 @@
         (write-lines-left window
                           (cl-strings:shorten (holdable/description item)
                                               (- *width* 2 2 3 1))
-                          3 y)))))
+                          3 y)))
+    (write-string-left window (format nil "Press h for help") 1 (1- *height*))))
 
 
 (defun move-player (dx dy)
@@ -231,6 +250,7 @@
 (defun world-map-input (window)
   (case (charms:get-char window)
     (#\q :quit)
+    (#\h :help)
     (:left  (move-player -1 0) :tick)
     (:right (move-player 1 0) :tick)
     (:up    (move-player 0 -1) :tick)
@@ -250,9 +270,12 @@
           (render-map map-win)
           (render-items map-win))
         (redraw)
-        (case (world-map-input bar-win)
-          (:tick (tick-player *player*))
-          (:quit (return))))))
+        (if-first-time
+          (popup "Head north!")
+          (case (world-map-input bar-win)
+            (:tick (tick-player *player*))
+            (:quit (return))
+            (:help (popup *help*)))))))
   nil)
 
 

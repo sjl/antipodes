@@ -62,15 +62,19 @@
 (defun write-string-centered (window string y)
   (charms:write-string-at-point window string (center (length string) ap::*width*) y))
 
-(defun write-lines-left (window string start-x start-y)
-  (iterate (for line :in (cl-strings:split string #\newline))
-           (for y :from start-y)
-           (write-string-left window line start-x y)))
+(defun write-lines-left (window contents start-x start-y)
+  (if (stringp contents)
+    (write-lines-left window (cl-strings:split contents #\newline) start-x start-y)
+    (iterate (for line :in contents)
+             (for y :from start-y)
+             (write-string-left window line start-x y))))
 
-(defun write-lines-centered (window string start-y)
-  (iterate (for line :in (cl-strings:split string #\newline))
-           (for y :from start-y)
-           (write-string-centered window line y)))
+(defun write-lines-centered (window contents start-y)
+  (if (stringp contents)
+    (write-lines-centered window (cl-strings:split contents #\newline) start-y)
+    (iterate (for line :in contents)
+             (for y :from start-y)
+             (write-string-centered window line y))))
 
 
 (defmacro with-dims ((width height) &body body)

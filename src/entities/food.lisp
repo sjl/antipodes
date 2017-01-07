@@ -1,7 +1,9 @@
 (in-package :ap.entities)
 
-(defparameter *vegetables*
-  (read-file-into-form "data/vegetables.lisp"))
+(defparameter *foods*
+  (concatenate 'vector
+               (read-file-into-form "data/vegetables.lisp")
+               (read-file-into-form "data/meat.lisp")))
 
 
 (define-entity food (visible coords holdable)
@@ -13,7 +15,7 @@
 (defun random-food-description ()
   (format nil "a ~A of ~A"
           (random-elt #("can" "tin" "package"))
-          (random-elt *vegetables*)))
+          (random-elt *foods*)))
 
 (defun make-food (x y)
   (create-entity 'food
