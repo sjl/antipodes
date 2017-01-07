@@ -170,14 +170,23 @@
 (defun render-sidebar (window)
   (charms:clear-window window)
   (border window)
-  (write-string-left window
-                     (format nil "You are ~A" (health-description
-                                                (player/health *player*)))
-                     1 1)
-  (write-string-left window
-                     (format nil "        ~A" (energy-description
-                                                (player/energy *player*)))
-                     1 2))
+  (let ((p *player*))
+    (write-string-left window (format nil "You are ~A" (health-description
+                                                         (player/health p)))
+                       1 1)
+    (write-string-left window (format nil "        ~A" (energy-description
+                                                         (player/energy p)))
+                       1 2)
+    (write-string-left window (format nil "You are carrying:") 1 4)
+    (if (player-inventory-empty-p p)
+      (write-string-left window (format nil "Nothing") 3 5)
+      (iterate
+        (for item :in (player/inventory p))
+        (for y :from 5)
+        (write-lines-left window
+                          (cl-strings:shorten (holdable/description item)
+                                              (- *width* 2 2 3 1))
+                          3 y)))))
 
 
 (defun move-player (dx dy)
@@ -189,10 +198,10 @@
 (defun world-map-input (window)
   (case (charms:get-char window)
     (#\q :quit)
-    (:left (move-player -1 0))
-    (:right (move-player 1 0))
-    (:up    (move-player 0 -1))
-    (:down  (move-player 0 1))))
+    (:left  (move-player -1 0) :tick)
+    (:right (move-player 1 0) :tick)
+    (:up    (move-player 0 -1) :tick)
+    (:down  (move-player 0 1) :tick)))
 
 
 (defun world-map ()
@@ -207,7 +216,9 @@
           (center-view-on-player *width* *height*)
           (render-map map-win))
         (redraw)
-        (until (eql :quit (world-map-input bar-win))))))
+        (case (world-map-input bar-win)
+          (:tick (tick-player *player*))
+          (:quit (return))))))
   nil)
 
 

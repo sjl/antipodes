@@ -2,7 +2,7 @@
 ;;;; See http://quickutil.org for details.
 
 ;;;; To regenerate:
-;;;; (qtlc:save-utils-as "quickutils.lisp" :utilities '(:COMPOSE :CURRY :DEFINE-CONSTANT :DELETEF :MKSTR :ONCE-ONLY :RCURRY :READ-FILE-INTO-STRING :SYMB :WITH-GENSYMS) :ensure-package T :package "AP.QUICKUTILS")
+;;;; (qtlc:save-utils-as "quickutils.lisp" :utilities '(:COMPOSE :CURRY :DEFINE-CONSTANT :DELETEF :MKSTR :ONCE-ONLY :RCURRY :READ-FILE-INTO-STRING :REMOVEF :SYMB :WITH-GENSYMS) :ensure-package T :package "AP.QUICKUTILS")
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (unless (find-package "AP.QUICKUTILS")
@@ -17,7 +17,7 @@
                                          :COMPOSE :CURRY :DEFINE-CONSTANT
                                          :DELETEF :MKSTR :ONCE-ONLY :RCURRY
                                          :WITH-OPEN-FILE* :WITH-INPUT-FROM-FILE
-                                         :READ-FILE-INTO-STRING :SYMB
+                                         :READ-FILE-INTO-STRING :REMOVEF :SYMB
                                          :STRING-DESIGNATOR :WITH-GENSYMS))))
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (defun make-gensym-list (length &optional (x "G"))
@@ -248,6 +248,16 @@ unless it's `nil`, which means the system default."
               :while (= bytes-read buffer-size)))))))
   
 
+  (declaim (inline remove/swapped-arguments))
+  (defun remove/swapped-arguments (sequence item &rest keyword-arguments)
+    (apply #'remove item sequence keyword-arguments))
+
+  (define-modify-macro removef (item &rest remove-keywords)
+    remove/swapped-arguments
+    "Modify-macro for `remove`. Sets place designated by the first argument to
+the result of calling `remove` with `item`, place, and the `keyword-arguments`.")
+  
+
   (defun symb (&rest args)
     "Receives any number of objects, concatenates all into one string with `#'mkstr` and converts them to symbol.
 
@@ -302,6 +312,6 @@ unique symbol the named variable will be bound to."
   
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (export '(compose curry define-constant deletef mkstr once-only rcurry
-            read-file-into-string symb with-gensyms with-unique-names)))
+            read-file-into-string removef symb with-gensyms with-unique-names)))
 
 ;;;; END OF quickutils.lisp ;;;;

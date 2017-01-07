@@ -26,6 +26,7 @@
                   :components ((:file "world")))
                  (:module "aspects" :serial t
                   :components ((:file "coordinates")
+                               (:file "holdable")
                                (:file "visible")))
                  (:module "entities" :serial t
                   :components ((:file "player")))

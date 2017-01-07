@@ -50,10 +50,16 @@
   (:export
     :player
     :make-player
+    :tick-player
     :player/health
     :health-description
     :player/energy
     :energy-description
+    :player/inventory
+    :player-inventory-full-p
+    :player-inventory-empty-p
+    :player-get
+    :player-drop
 
     :coords
     :coords/x
@@ -61,6 +67,10 @@
     :coords?
     :coords-lookup
     :coords-move-entity
+
+    :holdable
+    :holdable?
+    :holdable/description
 
     :visible
     :visible?

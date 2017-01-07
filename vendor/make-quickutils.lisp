@@ -12,6 +12,7 @@
                :once-only
                :rcurry
                :read-file-into-string
+               :removef
                :symb
                :with-gensyms
 
