@@ -10,6 +10,7 @@
 (defparameter *intro6* (read-file-into-string "data/intro6.txt"))
 (defparameter *help* (read-file-into-string "data/help.txt"))
 (defparameter *death* (read-file-into-string "data/death.txt"))
+(defparameter *win* (read-file-into-string "data/win.txt"))
 
 (defparameter *starving-cooldown* 0)
 (defparameter *screen-width* nil)
@@ -319,6 +320,12 @@
   (popup "Thanks for playing!"))
 
 
+;;;; Winning ------------------------------------------------------------------
+(defun win ()
+  (popup *win*)
+  (popup "Thanks for playing!"))
+
+
 ;;;; World Map ----------------------------------------------------------------
 (defun terrain-rand-p (height)
   (evenp (truncate (* 100 (mod height 0.1)))))
@@ -530,6 +537,10 @@
       nil)))
 
 
+(defun check-win ()
+  (= 0 (coords/y *player*)))
+
+
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 1))
     (with-panels-and-windows
@@ -546,12 +557,12 @@
         (if-first-time
           (popup (format nil "You must head north to survive.~2%You can press h for help in-game."))
           (cond
+            ((check-win) (return (win)))
+            ((player-dead-p *player*) (return (death)))
             ((check-starvation-warning)
              (display-starvation-warning))
             ((ap.flavor:flavorp)
              (popup (ap.flavor:random-flavor)))
-            ((player-dead-p *player*)
-             (return (death)))
             (t (case (world-map-input bar-win)
                  (:tick (tick-player *player*)
                   (check-triggers))
