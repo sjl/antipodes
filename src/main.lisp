@@ -415,12 +415,21 @@
       (coords-move-entity player dest-x dest-y))))
 
 (defun get-items ()
-  (iterate (for item :in (remove-if-not #'holdable? (coords-nearby *player* 0)))
-           (when (player-inventory-full-p *player*)
-             (popup "You can't carry any more items.")
-             (return))
-           (player-get *player* item))
-  :tick)
+  (let ((items (remove-if-not #'holdable? (coords-nearby *player* 0))))
+    (cond ((null items)
+           nil)
+          ((player-inventory-full-p *player*)
+           (popup "You can't carry any more items.")
+           nil)
+          ((= 1 (length items))
+           (player-get *player* (first items))
+           :tick)
+          (t (let ((item (menu "What do you want to get?"
+                               items
+                               #'holdable/description)))
+               (if item
+                 (progn (player-get *player* item) :tick)
+                 nil))))))
 
 (defun drop-items ()
   (if (player-inventory-empty-p *player*)
