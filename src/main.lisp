@@ -538,6 +538,7 @@
     (charms:enable-raw-input :interpret-control-characters t)
     (charms:enable-extra-keys t)
     (charms/ll:start-color)
+    (charms/ll:curs-set 0)
     (charms:clear-window t)
     (init-colors)
 
