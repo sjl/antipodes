@@ -14,6 +14,8 @@
     "sock"
     "bra"
     "scarf"
+    "hat"
+    "sweatshirt"
     "jacket"
     "vest"
     "blouse"
@@ -22,9 +24,12 @@
 
 (defparameter *plural-clothes*
   #("pants"
+    "slacks"
     "socks"
     "briefs"
+    "pajamas"
     "gloves"
+    "long johns"
     "tights"
     "shorts"
     "boxers"
@@ -35,7 +40,7 @@
 (defun random-clothing-description ()
   (destructuring-bind (article fabric)
       (random-elt *fabrics*)
-    (if (randomp)
+    (if (randomp 0.7)
       (format nil "~A ~A ~A"
               article
               fabric
