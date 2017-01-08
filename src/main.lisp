@@ -204,8 +204,10 @@
 
 (defun spawn-player ()
   (setf *player* (make-player))
-  (iterate (repeat 2)
-           (player-get *player* (make-clothing 0 0))))
+  (iterate (repeat (random-range-inclusive 0 2))
+           (player-get *player* (make-clothing 0 0)))
+  (iterate (repeat (random-range-inclusive 1 3))
+           (player-get *player* (make-food 0 0))))
 
 (defun place-things (density constructor)
   (iterate
@@ -253,7 +255,7 @@
 ;;;; Popups -------------------------------------------------------------------
 (defun popup (contents)
   (let ((lines (cl-strings:split contents #\newline)))
-    (with-dims ((+ 3 (apply #'max 13 (mapcar #'length lines)))
+    (with-dims ((+ 2 (apply #'max 11 (mapcar #'length lines)))
                 (+ 3 (length lines)))
       (with-panel-and-window
           (pan win *width* *height*
@@ -264,7 +266,8 @@
         (write-lines-left win lines 1 1)
         (write-string-centered win "Press space" (1- *height*))
         (redraw)
-        (iterate (until (eql #\space (charms:get-char win))))))))
+        (iterate (until (eql #\space (charms:get-char win)))))))
+  nil)
 
 
 ;;;; Selection Menu -----------------------------------------------------------
@@ -299,6 +302,11 @@
                                     1 y))
         (redraw)
         (choose win items)))))
+
+(defmacro when-select-item ((symbol prompt items description-function) &body body)
+  `(let ((,symbol (menu ,prompt ,items ,description-function)))
+     (when ,symbol
+       ,@body)))
 
 
 ;;;; World Map ----------------------------------------------------------------
@@ -419,8 +427,7 @@
     (cond ((null items)
            nil)
           ((player-inventory-full-p *player*)
-           (popup "You can't carry any more items.")
-           nil)
+           (popup "You can't carry any more items."))
           ((= 1 (length items))
            (player-get *player* (first items))
            :tick)
@@ -433,15 +440,25 @@
 
 (defun drop-items ()
   (if (player-inventory-empty-p *player*)
-    (progn (popup "You don't have anything to drop.")
-           nil)
-    (let ((item (menu "What do you want to drop?"
-                      (player/inventory *player*)
-                      #'holdable/description)))
-      (if item
-        (progn (player-drop *player* item)
-               :tick)
-        nil))))
+    (popup "You don't have anything to drop.")
+    (when-select-item
+        (item "What do you want to drop?" (player/inventory *player*) #'holdable/description)
+      (player-drop *player* item)
+      :tick)))
+
+(defun eat ()
+  (let ((food (remove-if-not (rcurry #'typep 'food)
+                             (append (player/inventory *player*)
+                                     (coords-nearby *player* 0)))))
+    (cond ((null food)
+           (popup "You don't have anything to eat."))
+          ((> (player/energy *player*) 100.0)
+           (popup "You are too full to eat any more."))
+          (t (when-select-item
+                 (item "What do you want to eat?" food #'holdable/description)
+               (player-eat *player* item)
+               (popup (random-food-taste))
+               :tick)))))
 
 
 (defun world-map-input (window)
@@ -450,6 +467,7 @@
     (#\h :help)
     (#\g (get-items))
     (#\d (drop-items))
+    (#\e (eat))
     (:left  (move-player -1 0) :tick)
     (:right (move-player 1 0) :tick)
     (:up    (move-player 0 -1) :tick)

@@ -17,6 +17,23 @@
           (random-elt #("can" "tin" "package"))
           (random-elt *foods*)))
 
+(defun random-food-taste ()
+  (format nil "It tastes ~A."
+          (random-elt #("delicious"
+                        "okay"
+                        "wonderful"
+                        "decent"
+                        "musty"
+                        "salty"
+                        "awful"
+                        "better than nothing"
+                        "questionable"
+                        "pretty nice"
+                        "expensive"
+                        "horrifying"
+                        "like mice"
+                        "like an old sock"))))
+
 (defun make-food (x y)
   (create-entity 'food
     :coords/x x

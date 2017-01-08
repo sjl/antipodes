@@ -16,7 +16,8 @@
         ((< energy-value 50.0) "very hungry")
         ((< energy-value 80.0) "hungry")
         ((< energy-value 95.0) "peckish")
-        ((<= energy-value 100.0) "full")))
+        ((< energy-value 100.0) "full")
+        (t "stuffed")))
 
 
 (define-entity player (coords visible)
@@ -34,7 +35,7 @@
 
 
 (defun tick-player (player)
-  (zapf (player/energy player) (clamp 0.0 100.0 (- % 0.1))
+  (zapf (player/energy player) (clamp 0.0 140.0 (- % 0.1))
         (player/health player) (clamp 0.0 100.0
                                       (+ % (if (minusp (player/energy player))
                                              -0.1
@@ -59,3 +60,9 @@
   (setf (coords/x entity) (coords/x player)
         (coords/y entity) (coords/y player))
   (coords-insert-entity entity))
+
+(defun player-eat (player food)
+  (incf (player/energy player)
+        (food/energy food))
+  (removef (player/inventory player) food)
+  (destroy-entity food))

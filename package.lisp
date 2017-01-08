@@ -52,10 +52,12 @@
     :player-inventory-empty-p
     :player-get
     :player-drop
+    :player-eat
 
     :food
     :make-food
     :food/energy
+    :random-food-taste
 
     :clothing
     :make-clothing
