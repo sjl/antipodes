@@ -220,16 +220,16 @@
   (iterate (repeat 2)
            (player-get *player* (make-clothing 0 0))))
 
-(defun place-food ()
+(defun place-things (density constructor)
   (iterate
-    (with remaining = (round (* *food-density*
+    (with remaining = (round (* density
                                 *map-size*
                                 *map-size*)))
     (until (zerop remaining))
     (for x = (random-coord))
     (for y = (random-coord))
     (when (not (underwaterp (aref *terrain* x y)))
-      (make-food x y)
+      (funcall constructor x y)
       (decf remaining))))
 
 (defun generate-structures ()
@@ -238,7 +238,7 @@
 
 (defun generate-world ()
   (clear-entities)
-  (with-dims (30 (+ 2 4))
+  (with-dims (30 (+ 2 5))
     (with-panel-and-window
         (pan win *width* *height*
              (center *width* *screen-width*)
@@ -252,8 +252,12 @@
              (generate-structures))
       (progn (write-string-left win "Placing food..." 1 3)
              (redraw)
-             (place-food))
-      (progn (write-string-left win "Spawning player..." 1 4)
+             (place-things *food-density* #'make-food))
+      (progn (write-string-left win "Placing items..." 1 4)
+             (redraw)
+             (place-things *clothing-density* #'make-clothing)
+             (place-things *jewelery-density* #'make-jewelery))
+      (progn (write-string-left win "Spawning player..." 1 5)
              (redraw)
              (spawn-player))))
   (world-map))

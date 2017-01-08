@@ -60,6 +60,9 @@
     :clothing
     :make-clothing
 
+    :jewelery
+    :make-jewelery
+
     :trigger
     :trigger?
     :trigger/text

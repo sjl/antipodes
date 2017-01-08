@@ -2,6 +2,8 @@
 
 (defparameter *sidebar-width* 30)
 (defparameter *food-density* 1/6000)
+(defparameter *clothing-density* 1/20000)
+(defparameter *jewelery-density* 1/20000)
 (defparameter *map-size* 2000)
 (defparameter *noise-scale* 0.03)
 (defparameter *noise-seed-x* (random 1000.0))
