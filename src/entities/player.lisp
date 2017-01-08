@@ -36,7 +36,7 @@
 
 (defun tick-player (player)
   (zapf (player/energy player) (clamp 0.0 140.0 (- % 0.3))
-        (player/health player) (clamp 0.0 100.0
+        (player/health player) (clamp -1.0 100.0
                                       (+ % (if (< (player/energy player) 1.0)
                                              -0.5
                                              0.1)))))
@@ -66,3 +66,6 @@
         (food/energy food))
   (removef (player/inventory player) food)
   (destroy-entity food))
+
+(defun player-dead-p (player)
+  (<= (player/health player) 0.0))

@@ -9,6 +9,7 @@
 (defparameter *intro5* (read-file-into-string "data/intro5.txt"))
 (defparameter *intro6* (read-file-into-string "data/intro6.txt"))
 (defparameter *help* (read-file-into-string "data/help.txt"))
+(defparameter *death* (read-file-into-string "data/death.txt"))
 
 (defparameter *screen-width* nil)
 (defparameter *screen-height* nil)
@@ -311,6 +312,12 @@
        ,@body)))
 
 
+;;;; Death --------------------------------------------------------------------
+(defun death ()
+  (popup *death*)
+  (popup "Thanks for playing!"))
+
+
 ;;;; World Map ----------------------------------------------------------------
 (defun terrain-char (height)
   (cond ((< height -0.20) (values #\~ +blue-black+)) ; deep water
@@ -485,6 +492,7 @@
            (popup (trigger/text trigger))
            (destroy-entity trigger)))
 
+
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 1))
     (with-panels-and-windows
@@ -500,13 +508,15 @@
         (redraw)
         (if-first-time
           (popup (format nil "You must head north to survive.~2%You can press h for help in-game."))
-          (if (ap.flavor:flavorp)
-            (popup (ap.flavor:random-flavor))
-            (case (world-map-input bar-win)
-              (:tick (tick-player *player*)
-                     (check-triggers))
-              (:quit (return))
-              (:help (popup *help*))))))))
+          (cond ((ap.flavor:flavorp)
+                 (popup (ap.flavor:random-flavor)))
+                ((player-dead-p *player*)
+                 (return (death)))
+                (t (case (world-map-input bar-win)
+                     (:tick (tick-player *player*)
+                      (check-triggers))
+                     (:quit (return))
+                     (:help (popup *help*)))))))))
   nil)
 
 

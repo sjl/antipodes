@@ -53,6 +53,7 @@
     :player-get
     :player-drop
     :player-eat
+    :player-dead-p
 
     :food
     :make-food
