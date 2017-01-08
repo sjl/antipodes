@@ -26,12 +26,14 @@
                         "musty"
                         "salty"
                         "awful"
+                        "depressing"
+                        "like something else"
+                        "faintly of mice"
                         "better than nothing"
                         "questionable"
                         "pretty nice"
                         "expensive"
                         "horrifying"
-                        "like mice"
                         "like an old sock"))))
 
 (defun make-food (x y)

@@ -419,7 +419,9 @@
   (let* ((player *player*)
          (dest-x (+ (coords/x player) dx))
          (dest-y (+ (coords/y player) dy)))
-    (when (passablep (aref *structures* dest-x dest-y))
+    (when (and (in-range-p 0 dest-x *map-size*)
+               (in-range-p 0 dest-y *map-size*)
+               (passablep (aref *structures* dest-x dest-y)))
       (coords-move-entity player dest-x dest-y))))
 
 (defun get-items ()

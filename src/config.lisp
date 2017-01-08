@@ -1,7 +1,7 @@
 (in-package :ap)
 
 (defparameter *sidebar-width* 30)
-(defparameter *food-density* 1/6000)
+(defparameter *food-density* 1/10000)
 (defparameter *clothing-density* 1/20000)
 (defparameter *jewelery-density* 1/20000)
 (defparameter *map-size* 2000)
@@ -14,6 +14,7 @@
 (defparameter *ruin-size-dev* 2.0)
 (defparameter *graffiti-chance* 1/10)
 (defparameter *flavor-chance* 1/300)
+(defparameter *flavor-cooldown* 200)
 
 (defcolors
   (+white-black+  charms/ll:COLOR_WHITE   charms/ll:COLOR_BLACK)

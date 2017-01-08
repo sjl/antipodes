@@ -16,7 +16,7 @@
         ((< energy-value 50.0) "very hungry")
         ((< energy-value 80.0) "hungry")
         ((< energy-value 95.0) "peckish")
-        ((< energy-value 100.0) "full")
+        ((<= energy-value 100.0) "full")
         (t "stuffed")))
 
 
@@ -29,16 +29,16 @@
 (defun make-player ()
   (create-entity 'player
     :coords/x (round (* 0.5 ap::*map-size*))
-    :coords/y (round (* 0.9 ap::*map-size*))
+    :coords/y (round (* 0.05 ap::*map-size*))
     :visible/glyph "@"
     :visible/color ap::+black-white+))
 
 
 (defun tick-player (player)
-  (zapf (player/energy player) (clamp 0.0 140.0 (- % 0.1))
+  (zapf (player/energy player) (clamp 0.0 140.0 (- % 0.3))
         (player/health player) (clamp 0.0 100.0
-                                      (+ % (if (minusp (player/energy player))
-                                             -0.1
+                                      (+ % (if (< (player/energy player) 1.0)
+                                             -0.5
                                              0.1)))))
 
 

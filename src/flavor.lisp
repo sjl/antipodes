@@ -1,9 +1,15 @@
 (in-package :ap.flavor)
 
 (defparameter *animals* (read-file-into-form "data/animals.lisp"))
+(defparameter *cooldown* 0)
 
 (defun flavorp ()
-  (randomp ap::*flavor-chance*))
+  (if (plusp *cooldown*)
+    (progn (decf *cooldown*) nil)
+    (if (randomp ap::*flavor-chance*)
+      (progn (setf *cooldown* ap::*flavor-cooldown*)
+             t)
+      nil)))
 
 (defun animal ()
   (format nil "You see ~A ~A.~2%~A"
