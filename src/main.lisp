@@ -11,6 +11,7 @@
 (defparameter *help* (read-file-into-string "data/help.txt"))
 (defparameter *death* (read-file-into-string "data/death.txt"))
 
+(defparameter *starving-cooldown* 0)
 (defparameter *screen-width* nil)
 (defparameter *screen-height* nil)
 
@@ -504,6 +505,31 @@
            (destroy-entity trigger)))
 
 
+(defun display-starvation-warning ()
+  (with-dims (40 6)
+    (with-panel-and-window
+        (pan win *width* *height*
+             (center *width* *screen-width*)
+             (center *height* *screen-height*))
+      (charms:clear-window win)
+      (border win)
+      (write-string-left win "You are         !" 1 1)
+      (with-color (win +red-black+)
+        (write-string-left win "STARVING" 9 1))
+      (write-string-left win "If you don't eat soon, you will die." 1 3)
+      (write-string-centered win "Press space" (1- *height*))
+      (redraw)
+      (iterate (until (eql #\space (charms:get-char win))))))
+  nil)
+
+(defun check-starvation-warning ()
+  (if (plusp *starving-cooldown*)
+    (progn (decf *starving-cooldown*) nil)
+    (if (< (player/energy *player*) 30.0)
+      (progn (setf *starving-cooldown* 100) t)
+      nil)))
+
+
 (defun world-map ()
   (with-dims ((- *screen-width* 2) (- *screen-height* 1))
     (with-panels-and-windows
@@ -519,15 +545,18 @@
         (redraw)
         (if-first-time
           (popup (format nil "You must head north to survive.~2%You can press h for help in-game."))
-          (cond ((ap.flavor:flavorp)
-                 (popup (ap.flavor:random-flavor)))
-                ((player-dead-p *player*)
-                 (return (death)))
-                (t (case (world-map-input bar-win)
-                     (:tick (tick-player *player*)
-                      (check-triggers))
-                     (:quit (return))
-                     (:help (popup *help*)))))))))
+          (cond
+            ((check-starvation-warning)
+             (display-starvation-warning))
+            ((ap.flavor:flavorp)
+             (popup (ap.flavor:random-flavor)))
+            ((player-dead-p *player*)
+             (return (death)))
+            (t (case (world-map-input bar-win)
+                 (:tick (tick-player *player*)
+                  (check-triggers))
+                 (:quit (return))
+                 (:help (popup *help*)))))))))
   nil)
 
 

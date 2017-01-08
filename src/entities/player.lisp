@@ -12,7 +12,7 @@
 
 (defun energy-description (energy-value)
   (cond ((<= energy-value 0.0) "starving")
-        ((< energy-value 30.0) "famished")
+        ((< energy-value 30.0) "starving")
         ((< energy-value 50.0) "very hungry")
         ((< energy-value 80.0) "hungry")
         ((< energy-value 95.0) "peckish")

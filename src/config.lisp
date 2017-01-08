@@ -22,6 +22,7 @@
   (+cyan-black+   charms/ll:COLOR_CYAN    charms/ll:COLOR_BLACK)
   (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
   (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
+  (+red-black+    charms/ll:COLOR_RED     charms/ll:COLOR_BLACK)
   (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
 
   (+black-white+  charms/ll:COLOR_BLACK charms/ll:COLOR_WHITE)
