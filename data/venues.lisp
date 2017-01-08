@@ -272,7 +272,6 @@
   "a Preschool"
   "a Private School"
   "a Pub"
-  "a Public Art"
   "a Racetrack"
   "a Radio Station"
   "a Record Shop"

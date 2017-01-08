@@ -22,6 +22,8 @@
     ("box"                "dehydrated ")
     ("bag"                "dried ")
     ("bag"                "dehydrated ")
+    ("sack"               "dried ")
+    ("sack"               "dehydrated ")
     ("carton"             "dried ")
     ("carton"             "dehydrated ")
     ("bottle"             "slurried ")
@@ -38,7 +40,9 @@
     "decent"
     "delicious"
     "depressing"
+    "disgusting"
     "expensive"
+    "partially fermented"
     "faintly of mice"
     "gritty"
     "horrifying"

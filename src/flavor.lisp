@@ -30,17 +30,25 @@
           (random-elt #("It passes after a moment."
                         "It lingers for a while."))))
 
-(defun wind ()
-  (format nil "A ~A ~A the ~A air against your skin."
-          (random-elt #("light breeze"
-                        "gentle breeze"
-                        "stiff wind"
-                        "strong wind"))
-          (random-elt #("moves" "pushes"))
-          (random-elt #("hot" "warm" "sticky" "humid"))))
+(defun weather ()
+  (if (randomp)
+    (format nil "A ~A ~A the ~A air against your skin."
+            (random-elt #("light breeze"
+                          "gentle breeze"
+                          "stiff wind"
+                          "strong wind"))
+            (random-elt #("moves" "pushes"))
+            (random-elt #("hot" "warm" "sticky" "humid")))
+    (random-elt #("It begins to drizzle."
+                  "The wind picks up, pushing you around."
+                  "A cool wind blows from the north."
+                  "You hear thunder rumble in the distance."
+                  "A dust storm gathers in the distance."
+                  "The clouds part.  The sun beats down on your back."
+                  "For a moment the humidity drops.  You savor the dry air."))))
 
 (defun random-flavor ()
   (let ((r (random 1.0)))
     (cond ((< r 0.20) (animal))
-          ((< r 0.80) (feeling))
-          (t          (wind)))))
+          ((< r 0.30) (feeling))
+          (t          (weather)))))
