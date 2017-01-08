@@ -57,6 +57,9 @@
     :make-food
     :food/energy
 
+    :clothing
+    :make-clothing
+
     :trigger
     :trigger?
     :trigger/text

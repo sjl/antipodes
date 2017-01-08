@@ -110,11 +110,22 @@
                           (not (eq :wall (aref *structures* x y)))))
              (setf (aref *structures* x y) nil))))
 
+(defun random-ruin-floor-space (width height start-x start-y)
+  (values (random-range (1+ start-x) (+ start-x width -1))
+          (random-range (1+ start-y) (+ start-y height -1))))
+
 (defun place-ruin-food (width height start-x start-y)
-  (iterate (repeat (random 4))
-           (make-food
-             (random-range (1+ start-x) (+ start-x width))
-             (random-range (1+ start-y) (+ start-y height)))))
+  (iterate
+    (repeat (random 4))
+    (multiple-value-call #'make-food
+      (random-ruin-floor-space width height start-x start-y))))
+
+(defun place-ruin-clothing (width height start-x start-y)
+  (when (randomp)
+    (iterate
+      (repeat (random-range 1 4))
+      (multiple-value-call #'make-clothing
+        (random-ruin-floor-space width height start-x start-y)))))
 
 (defun add-ruin-trigger (width height start-x start-y)
   (make-ruin (+ start-x (truncate width 2))
@@ -130,6 +141,7 @@
     (add-ruin-door width height x y)
     (decay-ruin width height x y condition)
     (place-ruin-food width height x y)
+    (place-ruin-clothing width height x y)
     (add-ruin-trigger width height x y)))
 
 (defun fill-ruins ()
@@ -204,7 +216,9 @@
         *view-x* 0 *view-y* 0))
 
 (defun spawn-player ()
-  (setf *player* (make-player)))
+  (setf *player* (make-player))
+  (iterate (repeat 2)
+           (player-get *player* (make-clothing 0 0))))
 
 (defun place-food ()
   (iterate
@@ -377,7 +391,9 @@
 
 (defun get-items ()
   (iterate (for item :in (remove-if-not #'holdable? (coords-nearby *player* 0)))
-           (until (player-inventory-full-p *player*))
+           (when (player-inventory-full-p *player*)
+             (popup "You can't carry any more items.")
+             (return))
            (player-get *player* item)))
 
 

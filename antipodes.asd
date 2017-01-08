@@ -30,6 +30,7 @@
                                (:file "visible")))
                  (:module "entities" :serial t
                   :components ((:file "food")
+                               (:file "clothing")
                                (:file "ruin")
                                (:file "player")))
                  (:file "flavor")
