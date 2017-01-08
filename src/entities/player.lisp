@@ -55,7 +55,7 @@
   (push entity (player/inventory player)))
 
 (defun player-drop (player entity)
-  (removef entity (player/inventory player))
+  (removef (player/inventory player) entity)
   (setf (coords/x entity) (coords/x player)
         (coords/y entity) (coords/y player))
   (coords-insert-entity entity))

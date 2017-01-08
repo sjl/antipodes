@@ -49,6 +49,6 @@
     :coords/x x
     :coords/y y
     :visible/glyph "&"
-    :visible/color ap::+yellow-black+
+    :visible/color ap::+black-white+
     :holdable/description (random-clothing-description)))
 

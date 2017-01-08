@@ -267,6 +267,40 @@
         (iterate (until (eql #\space (charms:get-char win))))))))
 
 
+;;;; Selection Menu -----------------------------------------------------------
+(defun key->index (key)
+  (- (char-code key) (char-code #\a)))
+
+(defun index->key (index)
+  (code-char (+ (char-code #\a) index)))
+
+(defun choose (window items)
+  (let ((choice (key->index (charms:get-char window))))
+    (if (in-range-p 0 choice (length items))
+      (elt items choice)
+      nil)))
+
+(defun menu (prompt items description-function)
+  (let ((descriptions (mapcar description-function items)))
+    (with-dims
+        ((+ 3 (apply #'max (length prompt) (mapcar #'length descriptions)) 4)
+         (+ 3 (length items) 2))
+      (with-panel-and-window
+          (pan win *width* *height*
+               (center *width* *screen-width*)
+               (center *height* *screen-height*))
+        (charms:clear-window win)
+        (border win)
+        (write-string-left win prompt 1 1)
+        (iterate (for desc :in descriptions)
+                 (for y :from 3)
+                 (for i :from 0)
+                 (write-string-left win (format nil "~A - ~A" (index->key i) desc)
+                                    1 y))
+        (redraw)
+        (choose win items)))))
+
+
 ;;;; World Map ----------------------------------------------------------------
 (defun terrain-char (height)
   (cond ((< height -0.20) (values #\~ +blue-black+)) ; deep water
@@ -320,7 +354,7 @@
             (for y :from 1)
             (write-string-left window
                                (format nil "  ~A" (holdable/description item))
-                               0 1)))))))
+                               0 y)))))))
 
 (defun render-map (window)
   (iterate
@@ -385,14 +419,28 @@
            (when (player-inventory-full-p *player*)
              (popup "You can't carry any more items.")
              (return))
-           (player-get *player* item)))
+           (player-get *player* item))
+  :tick)
+
+(defun drop-items ()
+  (if (player-inventory-empty-p *player*)
+    (progn (popup "You don't have anything to drop.")
+           nil)
+    (let ((item (menu "What do you want to drop?"
+                      (player/inventory *player*)
+                      #'holdable/description)))
+      (if item
+        (progn (player-drop *player* item)
+               :tick)
+        nil))))
 
 
 (defun world-map-input (window)
   (case (charms:get-char window)
     (#\q :quit)
     (#\h :help)
-    (#\g (get-items) :tick)
+    (#\g (get-items))
+    (#\d (drop-items))
     (:left  (move-player -1 0) :tick)
     (:right (move-player 1 0) :tick)
     (:up    (move-player 0 -1) :tick)
