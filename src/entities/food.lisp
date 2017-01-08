@@ -5,6 +5,35 @@
                (read-file-into-form "data/vegetables.lisp")
                (read-file-into-form "data/meat.lisp")))
 
+(defparameter *tastes*
+  #("a bit rotten"
+    "a bit strange"
+    "awful"
+    "better than nothing"
+    "better than you expected"
+    "crunchy"
+    "decent"
+    "delicious"
+    "depressing"
+    "expensive"
+    "faintly of mice"
+    "gritty"
+    "horrifying"
+    "like an old sock"
+    "like it's brand new"
+    "like it's starting to go bad"
+    "like something else"
+    "like something your father used to make"
+    "like something your mother used to make"
+    "musty"
+    "okay"
+    "pretty nice"
+    "questionable"
+    "salty"
+    "sour"
+    "spicy"
+    "wonderful"))
+
 
 (define-entity food (visible coords holdable)
   (energy :accessor food/energy :initarg :food/energy))
@@ -19,22 +48,7 @@
 
 (defun random-food-taste ()
   (format nil "It tastes ~A."
-          (random-elt #("delicious"
-                        "okay"
-                        "wonderful"
-                        "decent"
-                        "musty"
-                        "salty"
-                        "awful"
-                        "depressing"
-                        "like something else"
-                        "faintly of mice"
-                        "better than nothing"
-                        "questionable"
-                        "pretty nice"
-                        "expensive"
-                        "horrifying"
-                        "like an old sock"))))
+          (random-elt *tastes*)))
 
 (defun make-food (x y)
   (create-entity 'food
