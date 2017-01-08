@@ -36,6 +36,7 @@
     "awful"
     "better than nothing"
     "better than you expected"
+    "bland"
     "crunchy"
     "decent"
     "delicious"
