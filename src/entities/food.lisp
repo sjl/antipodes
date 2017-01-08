@@ -22,7 +22,7 @@
     :coords/x x
     :coords/y y
     :visible/glyph "%"
-    :visible/color ap::+yellow-black+
+    :visible/color ap::+black-yellow+
     :holdable/description (random-food-description)
     :food/energy (random-food-energy)))
 

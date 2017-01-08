@@ -14,3 +14,18 @@
 (defparameter *ruin-size-dev* 2.0)
 (defparameter *graffiti-chance* 1/10)
 (defparameter *flavor-chance* 1/300)
+
+(defcolors
+  (+white-black+  charms/ll:COLOR_WHITE   charms/ll:COLOR_BLACK)
+  (+blue-black+   charms/ll:COLOR_BLUE    charms/ll:COLOR_BLACK)
+  (+cyan-black+   charms/ll:COLOR_CYAN    charms/ll:COLOR_BLACK)
+  (+yellow-black+ charms/ll:COLOR_YELLOW  charms/ll:COLOR_BLACK)
+  (+green-black+  charms/ll:COLOR_GREEN   charms/ll:COLOR_BLACK)
+  (+pink-black+   charms/ll:COLOR_MAGENTA charms/ll:COLOR_BLACK)
+
+  (+black-white+  charms/ll:COLOR_BLACK charms/ll:COLOR_WHITE)
+  (+black-blue+   charms/ll:COLOR_BLACK charms/ll:COLOR_BLUE)
+  (+black-cyan+   charms/ll:COLOR_BLACK charms/ll:COLOR_CYAN)
+  (+black-yellow+ charms/ll:COLOR_BLACK charms/ll:COLOR_YELLOW)
+  (+black-green+  charms/ll:COLOR_BLACK charms/ll:COLOR_GREEN)
+  (+black-pink+   charms/ll:COLOR_BLACK charms/ll:COLOR_MAGENTA))

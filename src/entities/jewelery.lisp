@@ -29,5 +29,5 @@
     :coords/x x
     :coords/y y
     :visible/glyph "*"
-    :visible/color ap::+green-black+
+    :visible/color ap::+black-pink+
     :holdable/description (random-jewelery-description)))
