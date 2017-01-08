@@ -272,7 +272,9 @@
 
 ;;;; Selection Menu -----------------------------------------------------------
 (defun key->index (key)
-  (- (char-code key) (char-code #\a)))
+  (if (characterp key)
+    (- (char-code key) (char-code #\a))
+    -1))
 
 (defun index->key (index)
   (code-char (+ (char-code #\a) index)))
@@ -450,8 +452,8 @@
 
 (defun eat ()
   (let ((food (remove-if-not (rcurry #'typep 'food)
-                             (append (player/inventory *player*)
-                                     (coords-nearby *player* 0)))))
+                             (append (coords-nearby *player* 0)
+                                     (player/inventory *player*)))))
     (cond ((null food)
            (popup "You don't have anything to eat."))
           ((> (player/energy *player*) 100.0)

@@ -29,7 +29,7 @@
 (defun make-player ()
   (create-entity 'player
     :coords/x (round (* 0.5 ap::*map-size*))
-    :coords/y (round (* 0.05 ap::*map-size*))
+    :coords/y (round (* 0.93 ap::*map-size*))
     :visible/glyph "@"
     :visible/color ap::+black-white+))
 
