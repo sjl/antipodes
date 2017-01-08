@@ -319,13 +319,24 @@
 
 
 ;;;; World Map ----------------------------------------------------------------
+(defun terrain-rand-p (height)
+  (evenp (truncate (* 100 (mod height 0.1)))))
+
 (defun terrain-char (height)
   (cond ((< height -0.20) (values #\~ +blue-black+)) ; deep water
         ((< height -0.05) (values #\~ +cyan-black+)) ; shallow water
-        ((< height  0.05) (values #\` +yellow-black+)) ; sand
-        ((< height  0.40) (values #\. +white-black+)) ; dirt
+        ((< height  0.02) (values #\` +yellow-black+)) ; sand
+        ((< height  0.06) (if (terrain-rand-p height) ; sand/dirt border
+                            (values #\. +white-black+)
+                            (values #\` +yellow-black+)))
+        ((< height  0.40) (if (terrain-rand-p height) ; dirt
+                            (values #\, +white-black+)
+                            (values #\. +white-black+)))
+        ((< height  0.46) (if (terrain-rand-p height) ; hills/dirt border
+                            (values #\^ +white-black+)
+                            (values #\. +white-black+)))
         ((< height  0.55) (values #\^ +white-black+)) ; hills
-        (t                (values #\* +white-black+))))
+        (t                (values #\* +white-black+)))) ; peak
 
 (defun structure-char (contents)
   (case contents
