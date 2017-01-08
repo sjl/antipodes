@@ -5,6 +5,29 @@
                (read-file-into-form "data/vegetables.lisp")
                (read-file-into-form "data/meat.lisp")))
 
+(defparameter *containers*
+  #(("can"                "")
+    ("can"                "preserved ")
+    ("can"                "old ")
+    ("can"                "pickled ")
+    ("tin"                "")
+    ("package"            "")
+    ("shrink-wrapped bag" "")
+    ("vacuum-sealed bag"  "")
+    ("jar"                "")
+    ("jar"                "preserved ")
+    ("jar"                "pickled ")
+    ("ration"             "")
+    ("box"                "dried ")
+    ("box"                "dehydrated ")
+    ("bag"                "dried ")
+    ("bag"                "dehydrated ")
+    ("carton"             "dried ")
+    ("carton"             "dehydrated ")
+    ("bottle"             "slurried ")
+    ("jug"                "slurried ")
+    ))
+
 (defparameter *tastes*
   #("a bit rotten"
     "a bit strange"
@@ -42,9 +65,12 @@
   (random-range 30.0 80.0))
 
 (defun random-food-description ()
-  (format nil "a ~A of ~A"
-          (random-elt #("can" "tin" "package"))
-          (random-elt *foods*)))
+  (destructuring-bind (container prefix)
+      (random-elt *containers*)
+    (format nil "a ~A of ~A~A"
+            container
+            prefix
+            (random-elt *foods*))))
 
 (defun random-food-taste ()
   (format nil "It tastes ~A."

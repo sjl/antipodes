@@ -38,7 +38,6 @@
  "an ewe"
  "a ferret"
  "a finch"
- "a fish"
  "a fox"
  "a frog"
  "a gazelle"

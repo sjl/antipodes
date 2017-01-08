@@ -36,7 +36,7 @@
   "green peppers"
   "horseradish"
   "hubbard squash"
-  "pickled jalapenos"
+  "jalapenos"
   "kale"
   "kidney beans"
   "kohlrabi"

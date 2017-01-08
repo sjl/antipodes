@@ -16,7 +16,7 @@
           (random-elt *animals*)
           (random-elt #("in the distance"
                         "out of the corner of your eye"
-                        "running north"))
+                        "heading north"))
           (random-elt #("A fellow traveler."
                         "It eyes you warily."
                         "She seems tired."
