@@ -584,6 +584,7 @@
 
 ;;;; Main ---------------------------------------------------------------------
 (defun main ()
+  (setf *random-state* (make-random-state t))
   (charms:with-curses ()
     (charms:disable-echoing)
     (charms:enable-raw-input :interpret-control-characters t)
