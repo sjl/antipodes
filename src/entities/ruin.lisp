@@ -32,7 +32,7 @@
     "Sickly-looking leaves cover its walls."
     "It looks like someone has been here recently."
     "The walls are charred from a fire."
-    "A small animal scurries into a hold under the wall."
+    "A small animal scurries into a hole under the wall."
     "Your parents used to live near one of these."
     "The world has suddenly gotten quiet."
     "A remnant of a happier time."))

@@ -11,7 +11,6 @@
   ("a" "burlap")
   ("a" "calico")
   ("a" "canvas")
-  ("a" "capilene")
   ("a" "carbon fiber")
   ("a" "cashmere")
   ("a" "chambray")
