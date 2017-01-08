@@ -81,6 +81,10 @@
     :coords-nearby
     :coords-move-entity
 
+    :worth
+    :worth?
+    :worth/points
+
     :holdable
     :holdable?
     :holdable/description

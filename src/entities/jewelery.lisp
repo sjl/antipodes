@@ -17,7 +17,7 @@
     "locket"
     "medallion"))
 
-(define-entity jewelery (visible coords holdable))
+(define-entity jewelery (visible coords holdable worth))
 
 (defun random-jewelery-description ()
   (destructuring-bind (article gem)
@@ -30,4 +30,5 @@
     :coords/y y
     :visible/glyph "*"
     :visible/color ap::+black-pink+
+    :worth/points (random-range 100 1000)
     :holdable/description (random-jewelery-description)))

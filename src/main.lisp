@@ -272,6 +272,15 @@
         (iterate (until (eql #\space (charms:get-char win)))))))
   nil)
 
+(defun show-possessions ()
+  (when (not (player-inventory-empty-p *player*))
+    (let ((items (remove-if-not #'worth? (player/inventory *player*))))
+      (popup (format nil "Your possessions were worth ~D points.~2%~{~D - ~A~%~}"
+                     (reduce #'+ items :key #'worth/points)
+                     (-<> items
+                       (mapcar (juxt #'worth/points #'holdable/description) <>)
+                       (apply #'append <>)))))))
+
 
 ;;;; Selection Menu -----------------------------------------------------------
 (defun key->index (key)
@@ -317,12 +326,14 @@
 ;;;; Death --------------------------------------------------------------------
 (defun death ()
   (popup *death*)
+  (show-possessions)
   (popup "Thanks for playing!"))
 
 
 ;;;; Winning ------------------------------------------------------------------
 (defun win ()
   (popup *win*)
+  (show-possessions)
   (popup "Thanks for playing!"))
 
 

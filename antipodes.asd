@@ -27,6 +27,7 @@
                   :components ((:file "coordinates")
                                (:file "holdable")
                                (:file "trigger")
+                               (:file "worth")
                                (:file "visible")))
                  (:module "entities" :serial t
                   :components ((:file "food")

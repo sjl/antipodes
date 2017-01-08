@@ -30,7 +30,7 @@
     "boxers"
     "panties"))
 
-(define-entity clothing (visible coords holdable))
+(define-entity clothing (visible coords holdable worth))
 
 (defun random-clothing-description ()
   (destructuring-bind (article fabric)
@@ -50,5 +50,6 @@
     :coords/y y
     :visible/glyph "&"
     :visible/color ap::+black-white+
+    :worth/points (random-range 100 200)
     :holdable/description (random-clothing-description)))
 
