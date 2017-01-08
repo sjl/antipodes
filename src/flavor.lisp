@@ -26,7 +26,11 @@
 
 (defun feeling ()
   (format nil "You suddenly have ~A feeling.~2%~A"
-          (random-elt #("a good" "a bad" "a worrying" "a hopeful" "an uneasy"))
+          (random-elt #("a good"
+                        "a bad"
+                        "a worrying"
+                        "a hopeful"
+                        "an uneasy"))
           (random-elt #("It passes after a moment."
                         "It lingers for a while."))))
 
@@ -38,7 +42,7 @@
                           "stiff wind"
                           "strong wind"))
             (random-elt #("moves" "pushes"))
-            (random-elt #("hot" "warm" "sticky" "humid")))
+            (random-elt #("hot" "warm" "sticky" "humid" "wet")))
     (random-elt #("It begins to drizzle."
                   "The wind picks up, pushing you around."
                   "A cool wind blows from the north."
@@ -49,6 +53,6 @@
 
 (defun random-flavor ()
   (let ((r (random 1.0)))
-    (cond ((< r 0.20) (animal))
-          ((< r 0.30) (feeling))
+    (cond ((< r 0.33) (animal))
+          ((< r 0.50) (feeling))
           (t          (weather)))))

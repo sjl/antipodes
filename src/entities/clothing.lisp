@@ -40,7 +40,7 @@
               article
               fabric
               (random-elt *singular-clothes*))
-      (format nil "a set of ~A ~A"
+      (format nil "a pair of ~A ~A"
               fabric
               (random-elt *plural-clothes*)))))
 

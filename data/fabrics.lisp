@@ -4,7 +4,6 @@
   ("an" "angora")
   ("an" "argyle")
   ("a" "ballistic nylon")
-  ("a" "barathea")
   ("a" "barkcloth")
   ("a" "bizarre silk")
   ("a" "broadcloth")

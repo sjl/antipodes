@@ -54,6 +54,7 @@
     "like something your father used to make"
     "like something your mother used to make"
     "musty"
+    "oily"
     "okay"
     "pretty nice"
     "questionable"
