@@ -136,7 +136,7 @@
         (y (clamp 0 (- *map-size* 50) (random-coord)))
         (width (max 5 (truncate (random-gaussian *ruin-size-mean* *ruin-size-dev*))))
         (height (max 5 (truncate (random-gaussian *ruin-size-mean* *ruin-size-dev*))))
-        (condition (random-range 0.1 0.8)))
+        (condition (random-range 0.1 1.0)))
     (add-intact-ruin width height x y)
     (add-ruin-door width height x y)
     (decay-ruin width height x y condition)
