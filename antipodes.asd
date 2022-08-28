@@ -8,7 +8,6 @@
 
   :depends-on (:beast
                :black-tie
-               :cl-arrows
                :cl-charms
                :cl-strings
                :iterate

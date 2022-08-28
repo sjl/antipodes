@@ -2,7 +2,6 @@
   (:use
     :cl
     :iterate
-    :cl-arrows
     :losh
     :beast
     :ap.quickutils)
@@ -34,7 +33,6 @@
   (:use
     :cl
     :iterate
-    :cl-arrows
     :losh
     :beast
     :ap.utilities
@@ -99,7 +97,6 @@
   (:use
     :cl
     :iterate
-    :cl-arrows
     :losh
     :ap.utilities
     :ap.quickutils)
@@ -111,7 +108,6 @@
   (:use
     :cl
     :iterate
-    :cl-arrows
     :losh
     :beast
     :ap.entities

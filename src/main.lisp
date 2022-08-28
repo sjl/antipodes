@@ -277,9 +277,9 @@
     (let ((items (remove-if-not #'worth? (player/inventory *player*))))
       (popup (format nil "Your possessions were worth ~D points.~2%~{~D - ~A~%~}"
                      (reduce #'+ items :key #'worth/points)
-                     (-<> items
-                       (mapcar (juxt #'worth/points #'holdable/description) <>)
-                       (apply #'append <>)))))))
+                     (_ items
+                       (mapcar (juxt #'worth/points #'holdable/description) _)
+                       (apply #'append _)))))))
 
 
 ;;;; Selection Menu -----------------------------------------------------------
@@ -379,8 +379,8 @@
 (defun render-items (window)
   (let* ((x (coords/x *player*))
          (y (coords/y *player*))
-         (items (-<> (coords-lookup x y)
-                  (remove-if-not #'holdable? <>)))
+         (items (_ (coords-lookup x y)
+                  (remove-if-not #'holdable? _)))
          (here-string (if (underwaterp (aref *terrain* x y))
                         "floating here"
                         "here")))
@@ -516,9 +516,9 @@
 
 
 (defun check-triggers ()
-  (iterate (for trigger :in (-<> *player*
-                              (coords-nearby <> 10)
-                              (remove-if-not #'trigger? <>)))
+  (iterate (for trigger :in (_ *player*
+                              (coords-nearby _ 10)
+                              (remove-if-not #'trigger? _)))
            (popup (trigger/text trigger))
            (destroy-entity trigger)))
 
